@@ -2,7 +2,8 @@
 import os
 from flask import Flask
 from flask_cors import CORS
-from extensions import db  # importamos la instancia de SQLAlchemy
+from extensions import db 
+from routes.usuario_routes import usuario_bp
 
 def create_app():
     app = Flask(__name__)
@@ -20,6 +21,10 @@ def create_app():
     # Inicializamos extensiones
     db.init_app(app)
     CORS(app)
+
+    # Registrar Blueprint
+    app.register_blueprint(usuario_bp)
+
 
     # Registramos modelos y creamos tablas
     with app.app_context():

@@ -14,7 +14,7 @@ class Consumo(db.Model):
     costo_lps = db.Column(db.Float, nullable=False)
 
     # Relación
-    dispositivo = db.relationship('Device', back_populates='consumos')
+    dispositivo = db.relationship('Dispositivo', back_populates='consumos')
 
     def __repr__(self):
-        return f"<Consumption {self.fecha} - {self.consumo_kwh} kWh>"
+        return f"<Consumo {self.fecha} - {self.consumo_kwh} kWh>"

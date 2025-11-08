@@ -11,8 +11,8 @@ class Usuario(db.Model):
     fecha_creacion = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Relaciones
-    dispositivos = db.relationship('Device', back_populates='usuario', cascade="all, delete-orphan")
-    sugerencias = db.relationship('SuggestionIA', back_populates='usuario', cascade="all, delete-orphan")
+    dispositivos = db.relationship('Dispositivo', back_populates='usuario', cascade="all, delete-orphan")
+    sugerencias = db.relationship('SugerencIA', back_populates='usuario', cascade="all, delete-orphan")
 
     def __repr__(self):
-        return f"<User {self.correo}>"
+        return f"<Usuario {self.correo}>"
