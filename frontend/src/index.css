@@ -1,0 +1,16 @@
+/* Declaración global de colores del tema PowerFlow */
+:root {
+  --color-powerflow-blue: #0078FF;
+  --color-powerflow-green: #A6FF00;
+  --color-dark-bg: #0D1117;
+  --color-dark-card: #161B22;
+  --color-border-gray: #21262D;
+}
+
+/* Fondo global */
+body {
+  background-color: var(--color-dark-bg);
+  color: white;
+  font-family: 'Inter', sans-serif;
+  transition: color 0.2s, background-color 0.2s;
+}

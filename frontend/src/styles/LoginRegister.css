@@ -1,0 +1,216 @@
+:root {
+  --blue: #0078FF;
+  --green: #A6FF00;
+  --dark-bg: #0D1117;
+  --dark-card: #161B22;
+  --border-gray: #21262D;
+}
+
+/* General */
+body {
+  margin: 0;
+  background-color: var(--dark-bg);
+  color: white;
+  font-family: "Inter", sans-serif;
+}
+
+.login-container {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 1rem;
+}
+
+/* Fondo energético */
+.energy-bg {
+  position: absolute;
+  width: 160%;
+  height: 160%;
+  background: radial-gradient(circle at 30% 30%, rgba(0, 120, 255, 0.25), transparent 70%),
+              radial-gradient(circle at 70% 70%, rgba(166, 255, 0, 0.15), transparent 70%);
+  animation: spin 50s linear infinite;
+  filter: blur(140px);
+  opacity: 0.7;
+  z-index: 0;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Card principal */
+.card {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 420px;
+  background-color: var(--dark-card);
+  border: 1px solid var(--border-gray);
+  border-radius: 16px;
+  padding: 2.5rem 2rem 2rem 2rem;
+  box-shadow: 0 0 35px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Logo: más grande y centrado */
+.logo {
+  width: 75%;
+  max-width: 280px;
+  margin: 0 auto 1.5rem auto;
+  display: block;
+}
+
+/* Transición entre formularios */
+.fade {
+  opacity: 0;
+  transform: translateY(-20px);
+  pointer-events: none;
+  transition: all 0.5s ease;
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fade.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+  position: relative;
+}
+
+/* Formulario: centrado y con ancho limitado */
+form {
+  width: 85%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+/* Título */
+h2 {
+  color: var(--green);
+  margin-bottom: 1.2rem;
+  text-align: center;
+}
+
+/* Inputs */
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-gray);
+  background-color: var(--dark-bg);
+  color: white;
+  font-size: 0.95rem;
+  transition: border-color 0.3s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--green);
+}
+
+/* Botón con pulso energético */
+.pulse-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: var(--blue);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, opacity 0.3s ease;
+  margin-top: 10px;
+}
+
+.pulse-btn:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+/* Efecto de pulso */
+.pulse-btn::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(0, 120, 255, 0.4), transparent 70%);
+  animation: pulse 2s infinite;
+  opacity: 0.4;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  50% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(0.8); opacity: 0.5; }
+}
+
+/* Footer */
+.footer-text {
+  text-align: center;
+  margin-top: 0.8rem;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.footer-text span {
+  color: var(--green);
+  cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card {
+    padding: 1.8rem 1.5rem;
+    width: 95%;
+  }
+
+  .logo {
+    width: 80%;
+    max-width: 240px;
+    margin-bottom: 1rem;
+  }
+
+  form {
+    width: 90%;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 1.5rem 1rem;
+  }
+
+  .logo {
+    width: 85%;
+    max-width: 220px;
+  }
+
+  input {
+    font-size: 0.85rem;
+  }
+
+  .pulse-btn {
+    font-size: 0.9rem;
+  }
+}

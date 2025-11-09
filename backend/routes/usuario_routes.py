@@ -3,8 +3,13 @@ from extensions import db
 from models.usuario import Usuario
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
+import jwt
+import datetime
 
 usuario_bp = Blueprint('usuarios', __name__)
+
+# Clave secreta (para firmar el token)
+SECRET_KEY = "powerflow_secret_key_2025"
 
 # Registrar nuevo usuario
 @usuario_bp.route('/api/usuarios', methods=['POST'])
@@ -31,7 +36,7 @@ def crear_usuario():
     if not re.match(patron_correo, correo):
         return jsonify({"error": "El formato del correo electrónico no es válido"}), 400
 
-    # 🔒 Validar longitud mínima de la contraseña
+    # Validar longitud mínima de la contraseña
     if len(password) < 6:
         return jsonify({"error": "La contraseña debe tener al menos 6 caracteres"}), 400
 
@@ -84,3 +89,48 @@ def eliminar_usuario(id):
     db.session.delete(usuario)
     db.session.commit()
     return jsonify({"mensaje": "Usuario eliminado correctamente"}), 200
+
+
+
+# Endpoint de inicio de sesión
+@usuario_bp.route('/api/login', methods=['POST'])
+def login_usuario():
+    data = request.get_json()
+    correo = data.get('correo')
+    password = data.get('password')
+
+    # 🧩 Validar campos vacíos
+    if not correo:
+        return jsonify({"error": "El campo 'correo' es obligatorio"}), 400
+
+    if not password:
+        return jsonify({"error": "El campo 'password' es obligatorio"}), 400
+
+    # Buscar usuario en la base de datos
+    usuario = Usuario.query.filter_by(correo=correo).first()
+
+    if not usuario:
+        return jsonify({"error": "El correo ingresado no está registrado"}), 404
+
+    # Verificar contraseña encriptada
+    if not check_password_hash(usuario.password, password):
+        return jsonify({"error": "Contraseña incorrecta"}), 401
+
+    # Generar token JWT válido por 1 hora
+    token = jwt.encode({
+        'id': usuario.id,
+        'nombre': usuario.nombre,
+        'correo': usuario.correo,
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+    }, SECRET_KEY, algorithm='HS256')
+
+    # Si todo es correcto, responder con los datos básicos del usuario
+    return jsonify({
+        "mensaje": "Inicio de sesión exitoso",
+        "token": token,
+        "usuario": {
+            "id": usuario.id,
+            "nombre": usuario.nombre,
+            "correo": usuario.correo
+        }
+    }), 200

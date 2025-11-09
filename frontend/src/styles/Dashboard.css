@@ -1,0 +1,334 @@
+:root {
+  --blue: #0078FF;
+  --green: #A6FF00;
+  --dark-bg: #020817;
+  --dark-bg-2: #050b1f;
+  --dark-card: #111827;
+  --sidebar-bg: #020617;
+  --border: #1f2937;
+  --text-main: #f9fafb;
+  --text-muted: #9ca3af;
+}
+
+/* Layout general */
+.dashboard-root {
+  display: flex;
+  min-height: 100vh;
+  background: radial-gradient(circle at 20% 0, #020617, #020817 40%, #020617 100%);
+  color: var(--text-main);
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 260px;
+  background: linear-gradient(to bottom, #020617, #020814);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1.2rem;
+  box-sizing: border-box;
+}
+
+.sidebar-header {
+  margin-bottom: 2rem;
+}
+
+.sidebar-logo {
+  width: 170px;
+}
+
+/* Navegación */
+.sidebar-nav {
+  flex: 1;
+}
+
+.nav-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 0.75rem;
+  margin-bottom: 0.4rem;
+  border-radius: 999px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.95rem;
+  text-align: left;
+  transition: background 0.2s, color 0.2s;
+}
+
+.nav-item .nav-icon {
+  font-size: 1.1rem;
+  width: 1.4rem;
+  text-align: center;
+}
+
+.nav-item.active {
+  background: var(--blue);
+  color: #fff;
+}
+
+.nav-item:hover:not(.active) {
+  background: rgba(148, 163, 184, 0.08);
+  color: #e5e7eb;
+}
+
+.sidebar-footer {
+  margin-top: 1rem;
+}
+
+/* CONTENIDO PRINCIPAL */
+.dashboard-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 2rem;
+  box-sizing: border-box;
+  background: radial-gradient(circle at 20% 0, #020617, #020817 40%, #020617 100%);
+}
+
+/* Topbar */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.topbar-titles h1 {
+  font-size: 1.7rem;
+  margin: 0 0 0.25rem 0;
+}
+
+.topbar-titles p {
+  margin: 0;
+  color: var(--green);
+  font-size: 1rem;
+}
+
+/* Avatar */
+.topbar-user .avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: #111827;
+  border: 2px solid var(--blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+}
+
+/* Hamburguesa (solo móvil) */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.hamburger span {
+  width: 20px;
+  height: 2px;
+  background: #e5e7eb;
+  border-radius: 999px;
+}
+
+/* Contenido principal */
+.dashboard-content {
+  flex: 1;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  grid-template-rows: auto auto;
+  gap: 1.2rem;
+}
+
+/* Cards generales */
+.card {
+  background-color: var(--dark-card);
+  border-radius: 16px;
+  padding: 1.4rem 1.5rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.6);
+}
+
+.card-label {
+  font-size: 1rem;
+  margin: 0 0 0.9rem 0;
+}
+
+/* Card: Total mensual */
+.total-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.total-values > div:first-child {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+
+.total-number {
+  font-size: 2.6rem;
+  font-weight: 700;
+}
+
+.total-unit {
+  font-size: 1rem;
+}
+
+/* Card: Gráfico */
+.chart-card {
+  grid-column: 2 / 3;
+}
+
+.chart-area {
+  margin-top: 0.4rem;
+}
+
+.chart-svg {
+  width: 100%;
+  height: 120px;
+}
+
+.chart-days {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Card: Top 3 dispositivos */
+.devices-card {
+  grid-column: 1 / 2;
+}
+
+.devices-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.devices-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.35rem 0;
+  border-bottom: 1px dashed rgba(148, 163, 184, 0.25);
+  font-size: 0.95rem;
+}
+
+.devices-list li:last-child {
+  border-bottom: none;
+}
+
+/* Card: Predicción */
+.prediction-card {
+  grid-column: 2 / 3;
+}
+
+.prediction-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.bulb-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  border: 2px solid var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--green);
+  font-size: 1.5rem;
+  box-shadow: 0 0 15px rgba(132, 204, 22, 0.6);
+}
+
+.prediction-text {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* ================ RESPONSIVE ================= */
+
+/* Tablets y móviles grandes */
+@media (max-width: 1024px) {
+  .dashboard-root {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    height: 100vh;
+    z-index: 30;
+    transition: left 0.3s ease;
+  }
+
+  .sidebar-open {
+    left: 0;
+  }
+
+  .dashboard-main {
+    padding: 1rem 1.2rem;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .topbar {
+    gap: 1rem;
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+
+  .chart-card,
+  .prediction-card {
+    grid-column: 1 / 2;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 640px) {
+  .sidebar {
+    width: 240px;
+  }
+
+  .sidebar-logo {
+    width: 150px;
+  }
+
+  .topbar-titles h1 {
+    font-size: 1.4rem;
+  }
+
+  .topbar-titles p {
+    font-size: 0.9rem;
+  }
+
+  .card {
+    padding: 1.1rem 1rem;
+  }
+
+  .total-number {
+    font-size: 2.2rem;
+  }
+}

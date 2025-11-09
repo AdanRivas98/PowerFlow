@@ -4,6 +4,9 @@ from flask import Flask
 from flask_cors import CORS
 from extensions import db 
 from routes.usuario_routes import usuario_bp
+from routes.dispositivo_routes import dispositivo_bp
+
+
 
 def create_app():
     app = Flask(__name__)
@@ -24,6 +27,7 @@ def create_app():
 
     # Registrar Blueprint
     app.register_blueprint(usuario_bp)
+    app.register_blueprint(dispositivo_bp)
 
 
     # Registramos modelos y creamos tablas
