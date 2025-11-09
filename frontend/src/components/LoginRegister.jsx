@@ -21,6 +21,11 @@ export default function LoginRegister() {
     }
   };
 
+  const toggleForm = () => {
+    setMensaje("");
+    setIsLogin(!isLogin);
+  };
+
   return (
     <div className="login-container">
       <div className="energy-bg"></div>
@@ -28,81 +33,97 @@ export default function LoginRegister() {
       <div className="card">
         <img src={logo} alt="PowerFlow Logo" className="logo" />
 
-        {/* LOGIN */}
-        <div className={`fade ${isLogin ? "active" : ""}`}>
-          <h2>Iniciar sesión</h2>
+        <div className="form-wrapper">
+          {/* LOGIN */}
+          <div className={`form-content ${isLogin ? "active" : ""}`}>
+            <h2>Iniciar sesión</h2>
 
-          <form onSubmit={handleSubmit}>
-            <label>Correo electrónico</label>
-            <input
-              type="email"
-              name="correo"
-              placeholder="adan@example.com"
-              onChange={handleChange}
-              required
-            />
+            <form onSubmit={handleSubmit}>
+              <div className="input-group">
+                <label>Correo electrónico</label>
+                <input
+                  type="email"
+                  name="correo"
+                  placeholder="adan@example.com"
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-            <label>Contraseña</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="********"
-              onChange={handleChange}
-              required
-            />
+              <div className="input-group">
+                <label>Contraseña</label>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="********"
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-            <button className="pulse-btn" type="submit">Ingresar</button>
-          </form>
+              <button className="pulse-btn" type="submit">
+                <span>Ingresar</span>
+              </button>
+            </form>
 
-          {mensaje && <p className="footer-text">{mensaje}</p>}
+            {mensaje && <p className="mensaje success">{mensaje}</p>}
 
-          <p className="footer-text">
-            ¿No tienes cuenta?{" "}
-            <span onClick={() => setIsLogin(false)}>Crear una Cuenta</span>
-          </p>
-        </div>
+            <p className="footer-text">
+              ¿No tienes cuenta?{" "}
+              <span onClick={toggleForm}>Crear una Cuenta</span>
+            </p>
+          </div>
 
-        {/* REGISTRO */}
-        <div className={`fade ${!isLogin ? "active" : ""}`}>
-          <h2>Crear cuenta</h2>
+          {/* REGISTRO */}
+          <div className={`form-content ${!isLogin ? "active" : ""}`}>
+            <h2>Crear cuenta</h2>
 
-          <form onSubmit={handleSubmit}>
-            <label>Nombre completo</label>
-            <input
-              type="text"
-              name="nombre"
-              placeholder="Adán Rivas"
-              onChange={handleChange}
-              required
-            />
+            <form onSubmit={handleSubmit}>
+              <div className="input-group">
+                <label>Nombre completo</label>
+                <input
+                  type="text"
+                  name="nombre"
+                  placeholder="Adán Rivas"
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-            <label>Correo electrónico</label>
-            <input
-              type="email"
-              name="correo"
-              placeholder="adan@example.com"
-              onChange={handleChange}
-              required
-            />
+              <div className="input-group">
+                <label>Correo electrónico</label>
+                <input
+                  type="email"
+                  name="correo"
+                  placeholder="adan@example.com"
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-            <label>Contraseña</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="********"
-              onChange={handleChange}
-              required
-            />
+              <div className="input-group">
+                <label>Contraseña</label>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="********"
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-            <button className="pulse-btn" type="submit">Registrarse</button>
-          </form>
+              <button className="pulse-btn" type="submit">
+                <span>Registrarse</span>
+              </button>
+            </form>
 
-          {mensaje && <p className="footer-text">{mensaje}</p>}
+            {mensaje && <p className="mensaje success">{mensaje}</p>}
 
-          <p className="footer-text">
-            ¿Ya tienes una cuenta?{" "}
-            <span onClick={() => setIsLogin(true)}>Iniciar sesión</span>
-          </p>
+            <p className="footer-text">
+              ¿Ya tienes una cuenta?{" "}
+              <span onClick={toggleForm}>Iniciar sesión</span>
+            </p>
+          </div>
         </div>
       </div>
     </div>

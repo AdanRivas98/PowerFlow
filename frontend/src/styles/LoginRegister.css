@@ -4,9 +4,14 @@
   --dark-bg: #0D1117;
   --dark-card: #161B22;
   --border-gray: #21262D;
+  --transition-speed: 0.4s;
 }
 
 /* General */
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   background-color: var(--dark-bg);
@@ -27,19 +32,19 @@ body {
 /* Fondo energético */
 .energy-bg {
   position: absolute;
-  width: 160%;
-  height: 160%;
-  background: radial-gradient(circle at 30% 30%, rgba(0, 120, 255, 0.25), transparent 70%),
-              radial-gradient(circle at 70% 70%, rgba(166, 255, 0, 0.15), transparent 70%);
-  animation: spin 50s linear infinite;
-  filter: blur(140px);
-  opacity: 0.7;
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(circle at 30% 30%, rgba(0, 120, 255, 0.2), transparent 60%),
+              radial-gradient(circle at 70% 70%, rgba(166, 255, 0, 0.12), transparent 60%);
+  animation: spin 40s linear infinite;
+  filter: blur(100px);
+  opacity: 0.8;
   z-index: 0;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* Card principal */
@@ -47,170 +52,289 @@ body {
   position: relative;
   z-index: 10;
   width: 100%;
-  max-width: 420px;
+  max-width: 480px;
   background-color: var(--dark-card);
   border: 1px solid var(--border-gray);
-  border-radius: 16px;
-  padding: 2.5rem 2rem 2rem 2rem;
-  box-shadow: 0 0 35px rgba(0, 0, 0, 0.4);
-  text-align: center;
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  border-radius: 20px;
+  padding: 2.5rem 2rem 2rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
 }
 
-/* Logo: más grande y centrado */
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 50px rgba(0, 120, 255, 0.15);
+}
+
+/* Logo */
 .logo {
-  width: 75%;
-  max-width: 280px;
-  margin: 0 auto 1.5rem auto;
+  width: 85%;
+  max-width: 320px;
+  margin: 0 auto 2rem;
   display: block;
+  animation: fadeInDown 0.6s ease;
+  filter: drop-shadow(0 4px 12px rgba(166, 255, 0, 0.15));
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.02);
+  filter: drop-shadow(0 6px 16px rgba(166, 255, 0, 0.25));
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Wrapper para transiciones */
+.form-wrapper {
+  position: relative;
+  min-height: 380px;
+  width: 100%;
 }
 
 /* Transición entre formularios */
-.fade {
-  opacity: 0;
-  transform: translateY(-20px);
-  pointer-events: none;
-  transition: all 0.5s ease;
+.form-content {
   position: absolute;
   width: 100%;
-  left: 0;
   top: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  left: 0;
+  opacity: 0;
+  transform: translateX(-30px);
+  pointer-events: none;
+  transition: opacity var(--transition-speed) ease, 
+              transform var(--transition-speed) ease;
 }
 
-.fade.active {
+.form-content.active {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateX(0);
   pointer-events: all;
   position: relative;
-}
-
-/* Formulario: centrado y con ancho limitado */
-form {
-  width: 85%;
-  max-width: 360px;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
-  margin: 0 auto;
 }
 
 /* Título */
 h2 {
   color: var(--green);
-  margin-bottom: 1.2rem;
+  margin: 0 0 1.5rem 0;
   text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+/* Formulario */
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Grupo de input */
+.input-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* Labels */
+label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #ccc;
+  margin: 0;
 }
 
 /* Inputs */
 input {
   width: 100%;
-  padding: 12px;
-  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
   border: 1px solid var(--border-gray);
   background-color: var(--dark-bg);
   color: white;
   font-size: 0.95rem;
-  transition: border-color 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+input::placeholder {
+  color: #666;
 }
 
 input:focus {
   outline: none;
   border-color: var(--green);
+  background-color: rgba(166, 255, 0, 0.03);
+  box-shadow: 0 0 0 3px rgba(166, 255, 0, 0.1);
 }
 
 /* Botón con pulso energético */
 .pulse-btn {
   width: 100%;
-  padding: 12px;
+  padding: 0.875rem 1.5rem;
   border: none;
-  border-radius: 6px;
-  background-color: var(--blue);
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--blue) 0%, #0056cc 100%);
   color: white;
   font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: transform 0.2s ease, opacity 0.3s ease;
-  margin-top: 10px;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.pulse-btn span {
+  position: relative;
+  z-index: 2;
 }
 
 .pulse-btn:hover {
-  opacity: 0.9;
-  transform: scale(1.02);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 120, 255, 0.4);
 }
 
-/* Efecto de pulso */
-.pulse-btn::after {
+.pulse-btn:active {
+  transform: translateY(0);
+}
+
+/* Efecto de pulso más sutil */
+.pulse-btn::before {
   content: "";
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(0, 120, 255, 0.4), transparent 70%);
-  animation: pulse 2s infinite;
-  opacity: 0.4;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
 }
 
-@keyframes pulse {
-  0% { transform: scale(0.8); opacity: 0.5; }
-  50% { transform: scale(1); opacity: 0.8; }
-  100% { transform: scale(0.8); opacity: 0.5; }
+.pulse-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Mensaje de éxito */
+.mensaje {
+  padding: 0.75rem;
+  border-radius: 6px;
+  text-align: center;
+  margin: 1rem 0 0.5rem;
+  font-size: 0.9rem;
+  animation: slideIn 0.4s ease;
+}
+
+.mensaje.success {
+  background-color: rgba(166, 255, 0, 0.1);
+  border: 1px solid rgba(166, 255, 0, 0.3);
+  color: var(--green);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Footer */
 .footer-text {
   text-align: center;
-  margin-top: 0.8rem;
+  margin-top: 1.5rem;
   font-size: 0.9rem;
-  color: #ccc;
+  color: #999;
 }
 
 .footer-text span {
   color: var(--green);
   cursor: pointer;
+  font-weight: 600;
+  transition: color 0.2s ease;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.3s ease, color 0.2s ease;
+}
+
+.footer-text span:hover {
+  color: #c0ff40;
+  text-decoration-color: #c0ff40;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .card {
-    padding: 1.8rem 1.5rem;
-    width: 95%;
+    padding: 1.5rem;
+    max-width: 95%;
   }
 
   .logo {
-    width: 80%;
-    max-width: 240px;
-    margin-bottom: 1rem;
+    width: 90%;
+    max-width: 340px;
+    margin-bottom: 1.8rem;
   }
 
-  form {
-    width: 90%;
+  .form-wrapper {
+    min-height: 360px;
+  }
+
+  h2 {
+    font-size: 1.35rem;
   }
 }
 
 @media (max-width: 480px) {
   .card {
-    padding: 1.5rem 1rem;
+    padding: 1.25rem;
+    border-radius: 16px;
   }
 
   .logo {
-    width: 85%;
-    max-width: 220px;
+    width: 95%;
+    max-width: 360px;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-wrapper {
+    min-height: 340px;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1.2rem;
+  }
+
+  form {
+    gap: 0.85rem;
   }
 
   input {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
+    padding: 0.65rem 0.875rem;
   }
 
   .pulse-btn {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    padding: 0.75rem 1.25rem;
+  }
+
+  .footer-text {
+    font-size: 0.85rem;
   }
 }
