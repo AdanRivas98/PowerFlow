@@ -5,8 +5,7 @@ from flask_cors import CORS
 from extensions import db 
 from routes.usuario_routes import usuario_bp
 from routes.dispositivo_routes import dispositivo_bp
-
-
+from flask_migrate import Migrate 
 
 def create_app():
     app = Flask(__name__)
@@ -24,6 +23,7 @@ def create_app():
     # Inicializamos extensiones
     db.init_app(app)
     CORS(app)
+    migrate=Migrate(app, db)
 
     # Registrar Blueprint
     app.register_blueprint(usuario_bp)

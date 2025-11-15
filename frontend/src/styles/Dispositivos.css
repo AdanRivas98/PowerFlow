@@ -1,0 +1,873 @@
+/* Dispositivos.css - Estilos para la pantalla de gestión de dispositivos */
+
+/* Variables de color (heredadas del tema) */
+:root {
+  --blue: #0078FF;
+  --green: #A6FF00;
+  --dark-bg: #0D1117;
+  --dark-card: #161B22;
+  --border-gray: #21262D;
+  --red: #ff6b6b;
+  --text-primary: #ffffff;
+  --text-secondary: #999;
+  --text-tertiary: #666;
+}
+
+/* Container principal */
+.dispositivos-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ============================================
+   HEADER
+============================================ */
+.dispositivos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-gray);
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.dispositivos-header h1 {
+  font-size: 28px;
+  color: var(--green);
+  margin: 0;
+  font-weight: 700;
+}
+
+.dispositivos-header p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin: 5px 0 0 0;
+}
+
+/* ============================================
+   BOTONES
+============================================ */
+.btn-primary {
+  background: linear-gradient(135deg, var(--blue) 0%, #0056cc 100%);
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 120, 255, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* ============================================
+   ESTADÍSTICAS
+============================================ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: var(--dark-card);
+  border: 1px solid var(--border-gray);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  border-color: var(--blue);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 120, 255, 0.2);
+}
+
+.stat-label {
+  color: var(--text-secondary);
+  font-size: 13px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--green);
+  line-height: 1.2;
+}
+
+.stat-unit {
+  font-size: 16px;
+  color: var(--text-tertiary);
+  margin-left: 4px;
+  font-weight: 400;
+}
+
+/* ============================================
+   FILTROS Y BÚSQUEDA
+============================================ */
+.filters-section {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 250px;
+  position: relative;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px 40px 12px 16px;
+  background: var(--dark-card);
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(166, 255, 0, 0.1);
+}
+
+.search-box input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.search-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-tertiary);
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.filter-btn {
+  padding: 10px 20px;
+  background: var(--dark-card);
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.filter-btn.active {
+  background: rgba(166, 255, 0, 0.1);
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.filter-btn:hover {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.view-toggle {
+  display: flex;
+  gap: 8px;
+}
+
+.view-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-gray);
+  background: var(--dark-card);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 18px;
+}
+
+.view-btn.active {
+  background: rgba(166, 255, 0, 0.1);
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.view-btn:hover {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+/* ============================================
+   GRID DE DISPOSITIVOS
+============================================ */
+.devices-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.devices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.devices-list .device-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 20px;
+}
+
+.devices-list .device-icon {
+  font-size: 32px;
+  margin-right: 20px;
+}
+
+.devices-list .device-header {
+  margin-bottom: 0;
+}
+
+.devices-list .device-info {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+}
+
+.devices-list .info-row {
+  border: none;
+  padding: 0;
+}
+
+/* ============================================
+   CARD DE DISPOSITIVO
+============================================ */
+.device-card {
+  background: var(--dark-card);
+  border: 1px solid var(--border-gray);
+  border-radius: 12px;
+  padding: 24px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.device-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--blue), var(--green));
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.device-card:hover::before {
+  transform: scaleX(1);
+}
+
+.device-card:hover {
+  border-color: var(--blue);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 120, 255, 0.2);
+}
+
+.device-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.device-icon {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.device-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 16px;
+}
+
+.icon-btn:hover {
+  background: rgba(166, 255, 0, 0.1);
+  color: var(--green);
+  transform: scale(1.1);
+}
+
+.icon-btn.delete:hover {
+  background: rgba(255, 107, 107, 0.1);
+  color: var(--red);
+}
+
+.device-name {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.device-category {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(166, 255, 0, 0.1);
+  border: 1px solid rgba(166, 255, 0, 0.3);
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--green);
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.device-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-gray);
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.info-value {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.consumption-estimate {
+  margin-top: 16px;
+  padding: 12px;
+  background: rgba(0, 120, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 120, 255, 0.2);
+}
+
+.estimate-label {
+  font-size: 12px;
+  color: var(--blue);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.estimate-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--blue);
+}
+
+/* ============================================
+   ESTADOS (LOADING, EMPTY)
+============================================ */
+.loading-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-secondary);
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--border-gray);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-tertiary);
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.empty-state p {
+  color: var(--text-tertiary);
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+/* ============================================
+   MODAL
+============================================ */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: var(--dark-card);
+  border: 1px solid var(--border-gray);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid var(--border-gray);
+}
+
+.modal-header h2 {
+  color: var(--green);
+  font-size: 22px;
+  margin: 0;
+}
+
+.modal-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background: rgba(255, 107, 107, 0.1);
+  color: var(--red);
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+/* ============================================
+   FORMULARIO DEL MODAL
+============================================ */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.form-group .required {
+  color: var(--red);
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--dark-bg);
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(166, 255, 0, 0.1);
+}
+
+.form-group input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.form-group input.input-error,
+.form-group select.input-error {
+  border-color: var(--red);
+  background: rgba(255, 107, 107, 0.05);
+}
+
+.error-message {
+  display: block;
+  color: var(--red);
+  font-size: 12px;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+.help-text {
+  display: block;
+  color: var(--text-tertiary);
+  font-size: 12px;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+.info-message {
+  display: block;
+  color: var(--blue);
+  font-size: 12px;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+/* ============================================
+   SUGERENCIAS DE IA
+============================================ */
+.suggestions-box {
+  background: linear-gradient(135deg, rgba(0, 120, 255, 0.1), rgba(166, 255, 0, 0.05));
+  border: 1px solid rgba(0, 120, 255, 0.3);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.suggestions-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.suggestions-icon {
+  font-size: 20px;
+}
+
+.suggestions-title {
+  font-weight: 600;
+  color: var(--blue);
+  font-size: 14px;
+}
+
+.suggestions-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.suggestion-item {
+  color: var(--text-primary);
+  font-size: 13px;
+  padding: 6px 0;
+}
+
+.suggestion-item strong {
+  color: var(--green);
+}
+
+.suggestions-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-suggestion {
+  flex: 1;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-suggestion.accept {
+  background: rgba(166, 255, 0, 0.2);
+  color: var(--green);
+  border: 1px solid rgba(166, 255, 0, 0.4);
+}
+
+.btn-suggestion.accept:hover {
+  background: rgba(166, 255, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-suggestion.reject {
+  background: rgba(255, 107, 107, 0.1);
+  color: var(--red);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.btn-suggestion.reject:hover {
+  background: rgba(255, 107, 107, 0.2);
+  transform: translateY(-1px);
+}
+
+/* ============================================
+   PREVIEW DE CONSUMO
+============================================ */
+.consumption-preview {
+  background: rgba(0, 120, 255, 0.05);
+  border: 1px solid rgba(0, 120, 255, 0.2);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.preview-label {
+  font-size: 12px;
+  color: var(--blue);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.preview-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--blue);
+  margin-bottom: 4px;
+}
+
+.preview-cost {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ============================================
+   ACCIONES DEL MODAL
+============================================ */
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-gray);
+}
+
+.btn-secondary {
+  flex: 1;
+  padding: 12px 24px;
+  background: var(--dark-bg);
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.btn-secondary:hover {
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.modal-actions .btn-primary {
+  flex: 1;
+}
+
+/* ============================================
+   RESPONSIVE
+============================================ */
+@media (max-width: 768px) {
+  .dispositivos-container {
+    padding: 15px;
+  }
+
+  .dispositivos-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dispositivos-header h1 {
+    font-size: 24px;
+  }
+
+  .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filters-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-box {
+    min-width: 100%;
+  }
+
+  .filter-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .view-toggle {
+    justify-content: center;
+  }
+
+  .devices-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .devices-list .device-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .devices-list .device-icon {
+    margin-right: 0;
+    margin-bottom: 15px;
+  }
+
+  .devices-list .device-info {
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .dispositivos-header h1 {
+    font-size: 20px;
+  }
+
+  .stat-value {
+    font-size: 28px;
+  }
+
+  .device-card {
+    padding: 20px;
+  }
+
+  .device-icon {
+    font-size: 32px;
+  }
+
+  .device-name {
+    font-size: 16px;
+  }
+
+  .modal-content {
+    max-width: 100%;
+    border-radius: 12px;
+  }
+}
