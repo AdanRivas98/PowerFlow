@@ -134,6 +134,35 @@
   transition: transform var(--transition-speed) ease;
 }
 
+.nav-item .nav-text {
+  flex: 1;
+}
+
+/* Badge de notificaciones */
+.nav-badge {
+  background: linear-gradient(135deg, #ff9500, #ff6b00);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
+  min-width: 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(255, 149, 0, 0.4);
+  animation: badgePulse 2s infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(255, 149, 0, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(255, 149, 0, 0.6);
+  }
+}
+
 .nav-item.active {
   background: linear-gradient(90deg, rgba(0, 120, 255, 0.15), rgba(0, 120, 255, 0.05));
   color: var(--blue);

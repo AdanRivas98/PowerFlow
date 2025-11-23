@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "../styles/Dispositivos.css";
 import DispositivoModal from "./DispositivoModal";
 
-export default function Dispositivos() {
+export default function Dispositivos({ dispositivoIdParaEditar }) {
   const [dispositivos, setDispositivos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -10,6 +10,10 @@ export default function Dispositivos() {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [viewMode, setViewMode] = useState("grid");
   const [editingDevice, setEditingDevice] = useState(null);
+  const [registrosMensuales, setRegistrosMensuales] = useState({});
+  
+  // Ref para controlar que el modal solo se abra una vez desde notificaciones
+  const modalAbiertoRef = useRef(false);
 
   const API_URL = "http://localhost:5000";
 
@@ -35,6 +39,24 @@ export default function Dispositivos() {
     cargarDispositivos();
   }, []);
 
+  // Efecto para abrir el modal cuando viene desde notificaciones
+  useEffect(() => {
+    if (dispositivoIdParaEditar && dispositivos.length > 0 && !modalAbiertoRef.current) {
+      const dispositivo = dispositivos.find(d => d.id === dispositivoIdParaEditar);
+      if (dispositivo) {
+        handleEditarClick(dispositivo);
+        modalAbiertoRef.current = true;
+      }
+    }
+  }, [dispositivoIdParaEditar, dispositivos]);
+
+  // Resetear el ref cuando se cierra el modal o se limpia dispositivoIdParaEditar
+  useEffect(() => {
+    if (!dispositivoIdParaEditar) {
+      modalAbiertoRef.current = false;
+    }
+  }, [dispositivoIdParaEditar]);
+
   // Cargar dispositivos desde el backend
   const cargarDispositivos = async () => {
     try {
@@ -52,9 +74,10 @@ export default function Dispositivos() {
         const data = await response.json();
         console.log("Dispositivos cargados:", data);
         
-        // Si el backend devuelve un mensaje en lugar de array vacío
         if (Array.isArray(data)) {
           setDispositivos(data);
+          // Cargar registros mensuales para cada dispositivo
+          await cargarRegistrosTodos(data);
         } else {
           setDispositivos([]);
         }
@@ -70,6 +93,57 @@ export default function Dispositivos() {
     }
   };
 
+  // Cargar registros mensuales para todos los dispositivos
+  const cargarRegistrosTodos = async (listaDispositivos) => {
+    const token = localStorage.getItem("token");
+    const hoy = new Date();
+    const mes = hoy.getMonth() + 1;
+    const anio = hoy.getFullYear();
+
+    const registrosTemp = {};
+
+    for (const dispositivo of listaDispositivos) {
+      try {
+        const response = await fetch(
+          `${API_URL}/api/dispositivos/${dispositivo.id}/registros?mes=${mes}&anio=${anio}`,
+          {
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json"
+            }
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          registrosTemp[dispositivo.id] = {
+            diasRegistrados: data.resumen?.dias_registrados || 0,
+            totalHoras: data.resumen?.total_horas || 0,
+            consumoKwh: data.resumen?.consumo_kwh || 0,
+            costoEstimado: data.resumen?.costo_estimado || 0
+          };
+        } else {
+          registrosTemp[dispositivo.id] = {
+            diasRegistrados: 0,
+            totalHoras: 0,
+            consumoKwh: 0,
+            costoEstimado: 0
+          };
+        }
+      } catch (error) {
+        console.error(`Error al cargar registros del dispositivo ${dispositivo.id}:`, error);
+        registrosTemp[dispositivo.id] = {
+          diasRegistrados: 0,
+          totalHoras: 0,
+          consumoKwh: 0,
+          costoEstimado: 0
+        };
+      }
+    }
+
+    setRegistrosMensuales(registrosTemp);
+  };
+
   // Filtrar dispositivos
   const dispositivosFiltrados = dispositivos.filter(dispositivo => {
     const matchSearch = dispositivo.nombre.toLowerCase().includes(searchQuery.toLowerCase());
@@ -77,25 +151,23 @@ export default function Dispositivos() {
     return matchSearch && matchCategory;
   });
 
-  // Calcular estadísticas
+  // Calcular estadísticas globales
   const calcularEstadisticas = () => {
     const total = dispositivos.length;
     
-    // Consumo estimado mensual (en kWh)
-    // Asumiendo 6 horas de uso diario promedio
-    const consumoMensual = dispositivos.reduce((acc, d) => {
-      const watts = d.potencia_watts || 0;
-      const consumo = (watts * 6 * 30) / 1000; // kWh
-      return acc + consumo;
-    }, 0);
+    // Sumar consumo real de todos los dispositivos (basado en registros)
+    let consumoMensualReal = 0;
+    let costoMensualReal = 0;
 
-    // Costo aproximado (Honduras: ~L 3.70 por kWh promedio)
-    const costoMensual = consumoMensual * 3.7;
+    Object.values(registrosMensuales).forEach(registro => {
+      consumoMensualReal += registro.consumoKwh || 0;
+      costoMensualReal += registro.costoEstimado || 0;
+    });
 
     return {
       total,
-      consumoMensual: consumoMensual.toFixed(2),
-      costoMensual: costoMensual.toFixed(2)
+      consumoMensual: consumoMensualReal.toFixed(2),
+      costoMensual: costoMensualReal.toFixed(2)
     };
   };
 
@@ -106,11 +178,14 @@ export default function Dispositivos() {
     return ICONOS[categoria] || ICONOS["Otros"];
   };
 
-  // Calcular consumo mensual de un dispositivo
-  const calcularConsumoDispositivo = (potencia) => {
-    if (!potencia) return "N/A";
-    const consumo = (potencia * 6 * 30) / 1000;
-    return consumo.toFixed(2);
+  // Obtener datos de registro de un dispositivo
+  const getRegistroDispositivo = (dispositivoId) => {
+    return registrosMensuales[dispositivoId] || {
+      diasRegistrados: 0,
+      totalHoras: 0,
+      consumoKwh: 0,
+      costoEstimado: 0
+    };
   };
 
   // Abrir modal para agregar
@@ -144,7 +219,7 @@ export default function Dispositivos() {
 
       if (response.ok) {
         console.log("Dispositivo eliminado:", dispositivo.nombre);
-        cargarDispositivos(); // Recargar lista
+        cargarDispositivos();
       } else {
         alert("Error al eliminar el dispositivo");
       }
@@ -152,6 +227,15 @@ export default function Dispositivos() {
       console.error("Error al eliminar:", error);
       alert("Error de conexión al eliminar el dispositivo");
     }
+  };
+
+  // Obtener nombre del mes actual
+  const getNombreMesActual = () => {
+    const meses = [
+      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
+    return meses[new Date().getMonth()];
   };
 
   return (
@@ -175,14 +259,14 @@ export default function Dispositivos() {
           <div className="stat-value">{stats.total}</div>
         </div>
         <div className="stat-card">
-          <div className="stat-label">Consumo Estimado Mensual</div>
+          <div className="stat-label">Consumo Real - {getNombreMesActual()}</div>
           <div className="stat-value">
             {stats.consumoMensual}
             <span className="stat-unit">kWh</span>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-label">Costo Aproximado</div>
+          <div className="stat-label">Costo del Mes</div>
           <div className="stat-value">
             L {stats.costoMensual}
             <span className="stat-unit">/mes</span>
@@ -265,71 +349,93 @@ export default function Dispositivos() {
       {/* Devices Grid/List */}
       {!loading && dispositivosFiltrados.length > 0 && (
         <div className={`devices-${viewMode}`}>
-          {dispositivosFiltrados.map((dispositivo) => (
-            <div key={dispositivo.id} className="device-card">
-              <div className="device-header">
-                <div className="device-icon">
-                  {getIcono(dispositivo.categoria)}
+          {dispositivosFiltrados.map((dispositivo) => {
+            const registro = getRegistroDispositivo(dispositivo.id);
+            
+            return (
+              <div key={dispositivo.id} className="device-card">
+                <div className="device-header">
+                  <div className="device-icon">
+                    {getIcono(dispositivo.categoria)}
+                  </div>
+                  <div className="device-actions">
+                    <button
+                      className="icon-btn"
+                      onClick={() => handleEditarClick(dispositivo)}
+                      title="Editar"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      className="icon-btn delete"
+                      onClick={() => handleEliminarClick(dispositivo)}
+                      title="Eliminar"
+                    >
+                      🗑️
+                    </button>
+                  </div>
                 </div>
-                <div className="device-actions">
-                  <button
-                    className="icon-btn"
-                    onClick={() => handleEditarClick(dispositivo)}
-                    title="Editar"
-                  >
-                    ✏️
-                  </button>
-                  <button
-                    className="icon-btn delete"
-                    onClick={() => handleEliminarClick(dispositivo)}
-                    title="Eliminar"
-                  >
-                    🗑️
-                  </button>
-                </div>
-              </div>
 
-              <div className="device-name">{dispositivo.nombre}</div>
-              
-              {dispositivo.categoria && (
-                <span className="device-category">{dispositivo.categoria}</span>
-              )}
+                <div className="device-name">{dispositivo.nombre}</div>
+                
+                {dispositivo.categoria && (
+                  <span className="device-category">{dispositivo.categoria}</span>
+                )}
 
-              <div className="device-info">
-                <div className="info-row">
-                  <span className="info-label">Potencia</span>
-                  <span className="info-value">
-                    {dispositivo.potencia_watts ? `${dispositivo.potencia_watts} W` : "No especificada"}
-                  </span>
+                <div className="device-info">
+                  <div className="info-row">
+                    <span className="info-label">Potencia</span>
+                    <span className="info-value">
+                      {dispositivo.potencia_watts ? `${dispositivo.potencia_watts} W` : "No especificada"}
+                    </span>
+                  </div>
+                  <div className="info-row">
+                    <span className="info-label">Horas/día</span>
+                    <span className="info-value">
+                      {dispositivo.horas_uso_dia || 6} horas
+                    </span>
+                  </div>
+                  <div className="info-row highlight">
+                    <span className="info-label">📅 Días registrados</span>
+                    <span className="info-value days">
+                      {registro.diasRegistrados} días
+                    </span>
+                  </div>
                 </div>
-                <div className="info-row">
-                  <span className="info-label">Uso diario estimado</span>
-                  <span className="info-value">6 horas</span>
-                </div>
-              </div>
 
-              {dispositivo.potencia_watts && (
+                {/* Consumo mensual basado en registros reales */}
                 <div className="consumption-estimate">
                   <div className="estimate-label">Consumo mensual estimado</div>
                   <div className="estimate-value">
-                    {calcularConsumoDispositivo(dispositivo.potencia_watts)} kWh
+                    {registro.consumoKwh > 0 
+                      ? `${registro.consumoKwh} kWh` 
+                      : (dispositivo.potencia_watts 
+                          ? `${((dispositivo.potencia_watts * (dispositivo.horas_uso_dia || 6) * 30) / 1000).toFixed(2)} kWh`
+                          : "N/A"
+                        )
+                    }
                   </div>
+                  {registro.costoEstimado > 0 && (
+                    <div className="estimate-cost">
+                      Costo: L {registro.costoEstimado}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          ))}
+              </div>
+            );
+          })}
         </div>
       )}
 
-      {/* Modal - Por ahora solo placeholder */}
+      {/* Modal */}
       {showModal && (
-  <DispositivoModal
-    showModal={showModal}
-    onClose={() => setShowModal(false)}
-    onSave={cargarDispositivos} // Recargar la lista después de guardar
-    editingDevice={editingDevice}
-  />
-)}
+        <DispositivoModal
+          showModal={showModal}
+          onClose={() => setShowModal(false)}
+          onSave={cargarDispositivos}
+          editingDevice={editingDevice}
+        />
+      )}
     </div>
   );
 }

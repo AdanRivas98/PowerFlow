@@ -6,6 +6,7 @@ from extensions import db
 from routes.usuario_routes import usuario_bp
 from routes.dispositivo_routes import dispositivo_bp
 from flask_migrate import Migrate 
+from routes.registro_uso_routes import registro_uso_bp
 
 def create_app():
     app = Flask(__name__)
@@ -28,11 +29,12 @@ def create_app():
     # Registrar Blueprint
     app.register_blueprint(usuario_bp)
     app.register_blueprint(dispositivo_bp)
+    app.register_blueprint(registro_uso_bp)
 
 
     # Registramos modelos y creamos tablas
     with app.app_context():
-        from models import Usuario, Dispositivo, Consumo, SugerencIA
+        from models import Usuario, Dispositivo, Consumo, SugerencIA, RegistroUso
         db.create_all()
 
     # Ruta simple de prueba

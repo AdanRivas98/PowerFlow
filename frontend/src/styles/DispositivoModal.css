@@ -1,0 +1,742 @@
+/* DispositivoModal.css - Estilos para el modal de dispositivos con calendario */
+
+:root {
+  --blue: #0078FF;
+  --green: #A6FF00;
+  --dark-bg: #0D1117;
+  --dark-card: #161B22;
+  --border-gray: #21262D;
+  --red: #ff6b6b;
+  --text-primary: #ffffff;
+  --text-secondary: #ccc;
+  --text-tertiary: #666;
+}
+
+/* ============================================
+   MODAL OVERLAY
+============================================ */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ============================================
+   MODAL CONTENT
+============================================ */
+.modal-content {
+  background: var(--dark-card);
+  border: 1px solid var(--border-gray);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 550px;
+  max-height: 90vh;
+  overflow-y: auto;
+  color: var(--text-primary);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scrollbar personalizado */
+.modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: var(--dark-bg);
+  border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: var(--border-gray);
+  border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+/* ============================================
+   MODAL HEADER
+============================================ */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-gray);
+  position: sticky;
+  top: 0;
+  background: var(--dark-card);
+  z-index: 10;
+}
+
+.modal-header h2 {
+  color: var(--green);
+  font-size: 20px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.modal-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  color: #999;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background: rgba(255, 107, 107, 0.1);
+  color: var(--red);
+}
+
+.modal-close:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   MODAL BODY
+============================================ */
+.modal-body {
+  padding: 24px;
+}
+
+/* ============================================
+   SECCIONES
+============================================ */
+.section {
+  margin-bottom: 28px;
+}
+
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-gray);
+}
+
+.section-icon {
+  font-size: 20px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--green);
+}
+
+/* ============================================
+   FORMULARIO
+============================================ */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.form-group label .required {
+  color: var(--red);
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--dark-bg);
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(166, 255, 0, 0.1);
+}
+
+.form-group input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.form-group input.input-error,
+.form-group select.input-error {
+  border-color: var(--red);
+  background: rgba(255, 107, 107, 0.05);
+}
+
+.form-group input:disabled,
+.form-group select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error-message {
+  display: block;
+  color: var(--red);
+  font-size: 12px;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+.help-text {
+  display: block;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: 5px;
+}
+
+.info-message {
+  display: block;
+  color: var(--blue);
+  font-size: 12px;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+/* ============================================
+   SUGERENCIAS DE IA
+============================================ */
+.suggestions-box {
+  background: linear-gradient(135deg, rgba(0, 120, 255, 0.1), rgba(166, 255, 0, 0.05));
+  border: 1px solid rgba(0, 120, 255, 0.3);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.suggestions-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.suggestions-icon {
+  font-size: 20px;
+}
+
+.suggestions-title {
+  font-weight: 600;
+  color: var(--blue);
+  font-size: 14px;
+}
+
+.suggestions-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.suggestion-item {
+  color: var(--text-primary);
+  font-size: 13px;
+  padding: 6px 0;
+}
+
+.suggestion-item strong {
+  color: var(--green);
+}
+
+.suggestions-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-suggestion {
+  flex: 1;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-suggestion.accept {
+  background: rgba(166, 255, 0, 0.2);
+  color: var(--green);
+  border: 1px solid rgba(166, 255, 0, 0.4);
+}
+
+.btn-suggestion.accept:hover {
+  background: rgba(166, 255, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-suggestion.reject {
+  background: rgba(255, 107, 107, 0.1);
+  color: var(--red);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.btn-suggestion.reject:hover {
+  background: rgba(255, 107, 107, 0.2);
+  transform: translateY(-1px);
+}
+
+/* ============================================
+   CALENDARIO
+============================================ */
+.calendar-container {
+  background: var(--dark-bg);
+  border: 1px solid var(--border-gray);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.calendar-month {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 15px;
+}
+
+.calendar-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.calendar-nav button {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border-gray);
+  background: transparent;
+  border-radius: 4px;
+  color: #999;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.calendar-nav button:hover:not(:disabled) {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.calendar-nav button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.calendar-weekdays span {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  padding: 4px;
+  font-weight: 600;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+}
+
+.calendar-day:hover:not(.empty) {
+  background: rgba(166, 255, 0, 0.1);
+  border-color: var(--green);
+}
+
+.calendar-day.selected {
+  background: rgba(166, 255, 0, 0.2);
+  border-color: var(--green);
+  color: var(--green);
+  font-weight: 600;
+}
+
+.calendar-day.today {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+.calendar-day.today.selected {
+  background: linear-gradient(135deg, rgba(0, 120, 255, 0.2), rgba(166, 255, 0, 0.2));
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.calendar-day.empty {
+  cursor: default;
+  pointer-events: none;
+}
+
+/* ============================================
+   ACCIONES DEL CALENDARIO
+============================================ */
+.calendar-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-select-all {
+  flex: 1;
+  padding: 8px 12px;
+  background: rgba(166, 255, 0, 0.1);
+  border: 1px solid rgba(166, 255, 0, 0.3);
+  border-radius: 6px;
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-select-all:hover:not(:disabled) {
+  background: rgba(166, 255, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+.btn-select-all:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-clear {
+  padding: 8px 12px;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 6px;
+  color: var(--red);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-clear:hover:not(:disabled) {
+  background: rgba(255, 107, 107, 0.2);
+  transform: translateY(-1px);
+}
+
+.btn-clear:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   HORAS INPUT
+============================================ */
+.hours-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--dark-card);
+  border-radius: 8px;
+}
+
+.hours-input-row label {
+  color: var(--text-secondary);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.hours-input-row input {
+  width: 80px;
+  padding: 8px 12px;
+  background: var(--dark-bg);
+  border: 1px solid var(--border-gray);
+  border-radius: 6px;
+  color: var(--text-primary);
+  text-align: center;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.hours-input-row input:focus {
+  outline: none;
+  border-color: var(--green);
+}
+
+.hours-input-row input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.hours-input-row span {
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+/* ============================================
+   RESUMEN
+============================================ */
+.summary-box {
+  background: linear-gradient(135deg, rgba(0, 120, 255, 0.1), rgba(166, 255, 0, 0.05));
+  border: 1px solid rgba(0, 120, 255, 0.2);
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 16px;
+  animation: fadeIn 0.3s ease;
+}
+
+.summary-title {
+  font-size: 13px;
+  color: var(--blue);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.summary-item {
+  text-align: center;
+}
+
+.summary-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--blue);
+}
+
+.summary-label {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+/* ============================================
+   BOTONES DEL MODAL
+============================================ */
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-gray);
+}
+
+.btn-secondary {
+  flex: 1;
+  padding: 12px;
+  background: var(--dark-bg);
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+  color: #999;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.modal-actions .btn-primary {
+  flex: 1;
+  padding: 12px;
+  background: linear-gradient(135deg, var(--blue), #0056cc);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-actions .btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 120, 255, 0.4);
+}
+
+.modal-actions .btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ============================================
+   RESPONSIVE
+============================================ */
+@media (max-width: 600px) {
+  .modal-content {
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 12px;
+  }
+
+  .modal-header {
+    padding: 16px 20px;
+  }
+
+  .modal-header h2 {
+    font-size: 18px;
+  }
+
+  .modal-body {
+    padding: 20px;
+  }
+
+  .section-header {
+    gap: 8px;
+  }
+
+  .section-title {
+    font-size: 14px;
+  }
+
+  .calendar-container {
+    padding: 12px;
+  }
+
+  .calendar-day {
+    font-size: 12px;
+  }
+
+  .calendar-actions {
+    flex-direction: column;
+  }
+
+  .btn-select-all,
+  .btn-clear {
+    width: 100%;
+  }
+
+  .hours-input-row {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .hours-input-row label {
+    width: 100%;
+    text-align: center;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .summary-value {
+    font-size: 24px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 400px) {
+  .modal-body {
+    padding: 16px;
+  }
+
+  .calendar-day {
+    font-size: 11px;
+  }
+
+  .summary-value {
+    font-size: 20px;
+  }
+}

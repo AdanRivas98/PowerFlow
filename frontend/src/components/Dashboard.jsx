@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import "../styles/Dashboard.css";
 import logo from "../assets/powerflow-logo.png"; 
-import Dispositivos from "./Dispositivos";  
+import Dispositivos from "./Dispositivos";
+import Notificaciones from "./Notificaciones";
 
 export default function Dashboard({ onLogout }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -9,6 +10,8 @@ export default function Dashboard({ onLogout }) {
   const [usuario, setUsuario] = useState(null);
   const [dispositivos, setDispositivos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [notificacionesCount, setNotificacionesCount] = useState(0);
+  const [dispositivoIdParaEditar, setDispositivoIdParaEditar] = useState(null);
 
   const API_URL = "http://localhost:5000";
 
@@ -32,6 +35,7 @@ export default function Dashboard({ onLogout }) {
       console.log("Usuario cargado:", usuarioObj);
       setUsuario(usuarioObj);
       cargarDispositivos();
+      cargarNotificaciones();
     } catch (error) {
       console.error("Error al parsear usuario:", error);
       if (onLogout) {
@@ -60,7 +64,6 @@ export default function Dashboard({ onLogout }) {
         const data = await response.json();
         console.log("Dispositivos cargados:", data);
         
-        // Asegurar que data sea un array
         if (Array.isArray(data)) {
           setDispositivos(data);
         } else {
@@ -79,11 +82,42 @@ export default function Dashboard({ onLogout }) {
       }
     } catch (error) {
       console.error("Error de red al cargar dispositivos:", error);
-      // Si hay error de red, asumir que el endpoint no existe aún
       console.log("Probablemente el endpoint /api/dispositivos no existe aún");
       setDispositivos([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Cargar notificaciones y actualizar contador
+  const cargarNotificaciones = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      
+      // Verificar si ya visitó notificaciones en esta sesión (no en este día)
+      const visitoNotificacionesEstaSesion = sessionStorage.getItem("visito_notificaciones");
+      
+      // Si ya visitó en esta sesión, no mostrar el badge
+      if (visitoNotificacionesEstaSesion === "true") {
+        setNotificacionesCount(0);
+        return;
+      }
+      
+      const response = await fetch(`${API_URL}/api/notificaciones/dispositivos-sin-registro`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const count = data.total_sin_registro || 0;
+        setNotificacionesCount(count);
+      }
+    } catch (error) {
+      console.error("Error al cargar notificaciones:", error);
+      setNotificacionesCount(0);
     }
   };
 
@@ -101,6 +135,26 @@ export default function Dashboard({ onLogout }) {
 
   const handleNavClick = (section) => {
     setActiveSection(section);
+    
+    // Si entra a Notificaciones, resetear el contador y marcar que visitó
+    if (section === "Notificaciones") {
+      setNotificacionesCount(0);
+      sessionStorage.setItem("visito_notificaciones", "true");
+    }
+    
+    // Limpiar el dispositivo para editar cuando se cambia de sección
+    setDispositivoIdParaEditar(null);
+    
+    if (window.innerWidth <= 1024) {
+      setSidebarOpen(false);
+    }
+  };
+
+  // Función para navegar desde notificaciones al modal de dispositivo
+  const handleNavigateToDevice = (dispositivoId) => {
+    setDispositivoIdParaEditar(dispositivoId);
+    setActiveSection("Dispositivos");
+    
     if (window.innerWidth <= 1024) {
       setSidebarOpen(false);
     }
@@ -108,12 +162,12 @@ export default function Dashboard({ onLogout }) {
 
   const navItems = [
     { icon: "🏠", text: "Inicio" },
+    { icon: "🔔", text: "Notificaciones", badge: notificacionesCount },
     { icon: "💡", text: "Dispositivos" },
     { icon: "📊", text: "Consumo" },
     { icon: "🤖", text: "IA" },
     { icon: "📈", text: "Reportes" },
-    { icon: "⚙️", text: "Configuración" },
-    { icon: "🔔", text: "Notificaciones" }
+    { icon: "⚙️", text: "Configuración" }
   ];
 
   // Obtener iniciales del usuario
@@ -128,7 +182,6 @@ export default function Dashboard({ onLogout }) {
 
   // Calcular top 3 dispositivos por consumo (ejemplo con datos reales)
   const getTopDispositivos = () => {
-    // Verificar que dispositivos sea un array válido
     if (!Array.isArray(dispositivos) || dispositivos.length === 0) {
       return [
         { icon: "❄️", nombre: "Aire acondicionado", consumo: "90 kWh" },
@@ -137,15 +190,13 @@ export default function Dashboard({ onLogout }) {
       ];
     }
 
-    // Ordenar dispositivos por potencia y tomar los 3 primeros
-    // Crear una copia del array antes de ordenar para no mutar el original
     return [...dispositivos]
       .sort((a, b) => b.potencia_watts - a.potencia_watts)
       .slice(0, 3)
       .map(d => ({
         icon: getDispositivoIcon(d.tipo),
         nombre: d.nombre,
-        consumo: `${(d.potencia_watts / 1000 * 30).toFixed(0)} kWh` // Estimación mensual
+        consumo: `${(d.potencia_watts / 1000 * 30).toFixed(0)} kWh`
       }));
   };
 
@@ -164,17 +215,15 @@ export default function Dashboard({ onLogout }) {
   };
 
   if (!usuario) {
-    return null; // No mostrar nada mientras carga
+    return null;
   }
 
   return (
     <div className="dashboard-root">
-      {/* Overlay para cerrar sidebar en móvil */}
       {sidebarOpen && (
         <div className="sidebar-overlay" onClick={toggleSidebar}></div>
       )}
 
-      {/* SIDEBAR */}
       <aside className={`sidebar ${sidebarOpen ? "sidebar-open" : ""}`}>
         <div className="sidebar-header">
           <img src={logo} alt="PowerFlow" className="sidebar-logo" />
@@ -189,6 +238,9 @@ export default function Dashboard({ onLogout }) {
             >
               <span className="nav-icon">{item.icon}</span>
               <span className="nav-text">{item.text}</span>
+              {item.badge > 0 && (
+                <span className="nav-badge">{item.badge}</span>
+              )}
             </button>
           ))}
         </nav>
@@ -205,7 +257,6 @@ export default function Dashboard({ onLogout }) {
         </div>
       </aside>
 
-      {/* CONTENIDO PRINCIPAL */}
       <div className="dashboard-main">
         <header className="topbar">
           <button 
@@ -233,7 +284,6 @@ export default function Dashboard({ onLogout }) {
         <main className="dashboard-content">
           {activeSection === "Inicio" && (
             <section className="cards-grid">
-              {/* Total mensual */}
               <div className="card total-card">
                 <p className="card-label">Total mensual</p>
                 <div className="total-values">
@@ -247,7 +297,6 @@ export default function Dashboard({ onLogout }) {
                 </div>
               </div>
 
-              {/* Gráfico consumo diario */}
               <div className="card chart-card">
                 <p className="card-label">Consumo diario</p>
                 <div className="chart-area">
@@ -287,7 +336,6 @@ export default function Dashboard({ onLogout }) {
                 </div>
               </div>
 
-              {/* Top 3 dispositivos */}
               <div className="card devices-card">
                 <p className="card-label">Top 3 dispositivos</p>
                 {loading ? (
@@ -307,7 +355,6 @@ export default function Dashboard({ onLogout }) {
                 )}
               </div>
 
-              {/* Predicción */}
               <div className="card prediction-card">
                 <p className="card-label">Predicción IA</p>
                 <div className="prediction-content">
@@ -348,10 +395,17 @@ export default function Dashboard({ onLogout }) {
           )}
 
           {activeSection === "Dispositivos" && (  
-            <Dispositivos />
+            <Dispositivos dispositivoIdParaEditar={dispositivoIdParaEditar} />
           )}
 
-          {activeSection !== "Inicio" && activeSection !== "Perfil" && activeSection !== "Dispositivos" && (
+          {activeSection === "Notificaciones" && (
+            <Notificaciones onNavigateToDevice={handleNavigateToDevice} />
+          )}
+
+          {activeSection !== "Inicio" && 
+           activeSection !== "Perfil" && 
+           activeSection !== "Dispositivos" && 
+           activeSection !== "Notificaciones" && (
             <section className="cards-grid">
               <div className="card" style={{ gridColumn: "1 / -1", padding: "30px", textAlign: "center" }}>
                 <h2>{activeSection}</h2>
