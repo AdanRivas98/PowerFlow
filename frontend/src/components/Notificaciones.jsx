@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "../styles/Notificaciones.css";
 
-export default function Notificaciones({ onNavigateToDevice }) {
+export default function Notificaciones({ onNavigateToDevice, onNotificacionDescartada }) {
   const [notificaciones, setNotificaciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -14,10 +14,9 @@ export default function Notificaciones({ onNavigateToDevice }) {
 
   useEffect(() => {
     cargarNotificaciones();
-    marcarComoVistas();
   }, []);
 
-  // Cargar notificaciones desde el backend
+  // ✅ CORREGIDO: Cargar notificaciones y filtrar las descartadas
   const cargarNotificaciones = async () => {
     try {
       setLoading(true);
@@ -32,10 +31,21 @@ export default function Notificaciones({ onNavigateToDevice }) {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Notificaciones cargadas:", data);
+        console.log("📋 Notificaciones del backend:", data);
         
         if (data.dispositivos && Array.isArray(data.dispositivos)) {
-          const notificacionesFormateadas = data.dispositivos.map(d => ({
+          // ✅ FIX BUG 2: Obtener dispositivos descartados de sessionStorage
+          const descartadosStr = sessionStorage.getItem("notificaciones_descartadas");
+          const descartados = descartadosStr ? JSON.parse(descartadosStr) : [];
+          
+          console.log("🗑️ Dispositivos descartados en esta sesión:", descartados);
+          
+          // Filtrar las notificaciones descartadas
+          const dispositivosNoDescartados = data.dispositivos.filter(
+            d => !descartados.includes(d.id)
+          );
+          
+          const notificacionesFormateadas = dispositivosNoDescartados.map(d => ({
             id: d.id,
             tipo: "sin_registro",
             titulo: "Dispositivo sin registro",
@@ -53,6 +63,8 @@ export default function Notificaciones({ onNavigateToDevice }) {
             hoy: notificacionesFormateadas.length,
             pendientes: notificacionesFormateadas.length
           });
+          
+          console.log(`✓ ${notificacionesFormateadas.length} notificaciones mostradas (${descartados.length} filtradas)`);
         } else {
           setNotificaciones([]);
           setStats({ total: 0, hoy: 0, pendientes: 0 });
@@ -68,18 +80,6 @@ export default function Notificaciones({ onNavigateToDevice }) {
       setStats({ total: 0, hoy: 0, pendientes: 0 });
     } finally {
       setLoading(false);
-    }
-  };
-
-  // Marcar notificaciones como vistas (para que no aparezca el badge la próxima vez)
-  const marcarComoVistas = () => {
-    const hoy = new Date().toISOString().split('T')[0];
-    const ultimaVisita = localStorage.getItem("ultima_visita_notificaciones");
-    
-    if (ultimaVisita !== hoy) {
-      localStorage.setItem("ultima_visita_notificaciones", hoy);
-      // También limpiamos el contador
-      localStorage.setItem("notificaciones_pendientes", "0");
     }
   };
 
@@ -125,9 +125,22 @@ export default function Notificaciones({ onNavigateToDevice }) {
     }
   };
 
-  // Marcar como "No lo usé hoy" - Solo remueve la notificación sin registrar
+  // ✅ CORREGIDO BUG 2: Guardar dispositivos descartados en sessionStorage
   const marcarComoNoUsado = (notificacion) => {
-    // Simplemente remover la notificación de la lista (no registrar en backend)
+    console.log(`🗑️ Descartando notificación del dispositivo ID: ${notificacion.id}`);
+    
+    // Obtener la lista actual de descartados
+    const descartadosStr = sessionStorage.getItem("notificaciones_descartadas");
+    const descartados = descartadosStr ? JSON.parse(descartadosStr) : [];
+    
+    // Agregar este dispositivo a la lista de descartados si no está ya
+    if (!descartados.includes(notificacion.id)) {
+      descartados.push(notificacion.id);
+      sessionStorage.setItem("notificaciones_descartadas", JSON.stringify(descartados));
+      console.log("✓ Lista de descartados actualizada:", descartados);
+    }
+    
+    // Remover de la lista visual
     const notificacionesActualizadas = notificaciones.filter(n => n.id !== notificacion.id);
     setNotificaciones(notificacionesActualizadas);
     setStats(prev => ({
@@ -136,16 +149,44 @@ export default function Notificaciones({ onNavigateToDevice }) {
       hoy: notificacionesActualizadas.length,
       pendientes: notificacionesActualizadas.length
     }));
+    
+    // Notificar al Dashboard para que actualice el badge
+    if (onNotificacionDescartada) {
+      onNotificacionDescartada();
+    }
+    
+    console.log(`✓ Notificación descartada. Quedan ${notificacionesActualizadas.length}`);
   };
 
-  // Marcar todas como leídas
+  // ✅ CORREGIDO BUG 3: Marcar todas como leídas ahora las descarta todas
   const marcarTodasLeidas = () => {
-    const notificacionesActualizadas = notificaciones.map(n => ({
-      ...n,
-      leida: true
-    }));
-    setNotificaciones(notificacionesActualizadas);
-    setStats(prev => ({ ...prev, pendientes: 0 }));
+    console.log("🗑️ Descartando TODAS las notificaciones");
+    
+    // Obtener la lista actual de descartados
+    const descartadosStr = sessionStorage.getItem("notificaciones_descartadas");
+    const descartados = descartadosStr ? JSON.parse(descartadosStr) : [];
+    
+    // Agregar todos los IDs de las notificaciones actuales a descartados
+    notificaciones.forEach(n => {
+      if (!descartados.includes(n.id)) {
+        descartados.push(n.id);
+      }
+    });
+    
+    // Guardar en sessionStorage
+    sessionStorage.setItem("notificaciones_descartadas", JSON.stringify(descartados));
+    console.log("✓ Todas las notificaciones descartadas:", descartados);
+    
+    // Limpiar la lista visual
+    setNotificaciones([]);
+    setStats({ total: 0, hoy: 0, pendientes: 0 });
+    
+    // Notificar al Dashboard para que actualice el badge
+    if (onNotificacionDescartada) {
+      onNotificacionDescartada();
+    }
+    
+    console.log("✓ Todas las notificaciones han sido descartadas");
   };
 
   return (
@@ -158,7 +199,7 @@ export default function Notificaciones({ onNavigateToDevice }) {
         </div>
         {notificaciones.length > 0 && (
           <button className="btn-marcar-leidas" onClick={marcarTodasLeidas}>
-            ✓ Marcar todas como leídas
+            ✓ Descartar todas
           </button>
         )}
       </div>

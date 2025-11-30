@@ -1,12 +1,12 @@
-
 import os
 from flask import Flask
 from flask_cors import CORS
 from extensions import db 
 from routes.usuario_routes import usuario_bp
 from routes.dispositivo_routes import dispositivo_bp
-from flask_migrate import Migrate 
 from routes.registro_uso_routes import registro_uso_bp
+from routes.consumo_routes import consumo_bp
+from flask_migrate import Migrate 
 
 def create_app():
     app = Flask(__name__)
@@ -26,11 +26,11 @@ def create_app():
     CORS(app)
     migrate=Migrate(app, db)
 
-    # Registrar Blueprint
+    # Registrar Blueprints
     app.register_blueprint(usuario_bp)
     app.register_blueprint(dispositivo_bp)
     app.register_blueprint(registro_uso_bp)
-
+    app.register_blueprint(consumo_bp) 
 
     # Registramos modelos y creamos tablas
     with app.app_context():
@@ -48,4 +48,3 @@ def create_app():
 if __name__ == "__main__":
     app = create_app()
     app.run(debug=True)
-

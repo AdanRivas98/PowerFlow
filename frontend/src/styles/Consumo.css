@@ -1,0 +1,671 @@
+/* ============================================
+   CONSUMO - ESTILOS PRINCIPALES
+============================================ */
+
+:root {
+  --blue: #0078FF;
+  --green: #A6FF00;
+  --red: #FF6B6B;
+  --yellow: #FFD93D;
+  --dark-bg: #0D1117;
+  --dark-card: #161B22;
+  --border-gray: #21262D;
+  --text-primary: #ffffff;
+  --text-secondary: #999;
+  --text-tertiary: #666;
+}
+
+.consumo-container {
+  padding: 0;
+  width: 100%;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   HEADER Y FILTROS
+============================================ */
+
+.consumo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.consumo-header h1 {
+  font-size: 28px;
+  margin: 0;
+  color: var(--green);
+  font-weight: 700;
+}
+
+.consumo-header p {
+  margin: 5px 0 0 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.periodo-selector {
+  display: flex;
+  gap: 10px;
+  background: var(--dark-card);
+  padding: 5px;
+  border-radius: 12px;
+  border: 1px solid var(--border-gray);
+}
+
+.periodo-btn {
+  padding: 10px 20px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.periodo-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.periodo-btn.active {
+  background: linear-gradient(135deg, var(--blue), #0056cc);
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 120, 255, 0.3);
+}
+
+/* ============================================
+   MÉTRICAS GRID
+============================================ */
+
+.metricas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.metrica-card {
+  background: var(--dark-card);
+  border: 1px solid var(--border-gray);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.metrica-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--blue), var(--green));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s ease;
+}
+
+.metrica-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 120, 255, 0.2);
+  border-color: var(--blue);
+}
+
+.metrica-card:hover::before {
+  transform: scaleX(1);
+}
+
+.metrica-card.primary {
+  background: linear-gradient(135deg, rgba(0, 120, 255, 0.1), rgba(166, 255, 0, 0.05));
+  border-color: rgba(0, 120, 255, 0.3);
+}
+
+.metrica-card.highlight {
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(255, 217, 61, 0.05));
+  border-color: rgba(255, 107, 107, 0.3);
+}
+
+.metrica-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.metrica-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metrica-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.metrica-valor {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+  display: inline;
+}
+
+.metrica-unidad {
+  font-size: 16px;
+  color: var(--text-tertiary);
+  margin-left: 8px;
+  font-weight: 500;
+}
+
+.metrica-cambio {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 20px;
+  display: inline-block;
+  align-self: flex-start;
+}
+
+.metrica-cambio.aumento {
+  background: rgba(255, 107, 107, 0.15);
+  color: #FF6B6B;
+}
+
+.metrica-cambio.disminucion {
+  background: rgba(166, 255, 0, 0.15);
+  color: var(--green);
+}
+
+.metrica-info {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+/* ============================================
+   SECCIONES DE GRÁFICOS
+============================================ */
+
+.chart-section {
+  background: var(--dark-card);
+  border: 1px solid var(--border-gray);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 30px;
+  transition: all 0.3s ease;
+}
+
+.chart-section:hover {
+  border-color: rgba(0, 120, 255, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 120, 255, 0.1);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-header h2 {
+  font-size: 20px;
+  margin: 0;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.section-subtitle {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+.chart-container {
+  width: 100%;
+  margin-top: 20px;
+}
+
+/* ============================================
+   TOOLTIP PERSONALIZADO
+============================================ */
+
+.chart-tooltip {
+  background: var(--dark-card);
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.tooltip-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0 0 4px 0;
+}
+
+.tooltip-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--blue);
+  margin: 0 0 4px 0;
+}
+
+.tooltip-cost {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+.tooltip-percentage {
+  font-size: 13px;
+  color: var(--green);
+  margin: 0;
+  font-weight: 600;
+}
+
+/* ============================================
+   GRID DE 2 COLUMNAS
+============================================ */
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+/* ============================================
+   TOP CONSUMIDORES
+============================================ */
+
+.top-dispositivos {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dispositivo-item {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(0, 120, 255, 0.03);
+  border: 1px solid var(--border-gray);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.dispositivo-item:hover {
+  background: rgba(0, 120, 255, 0.08);
+  border-color: rgba(0, 120, 255, 0.3);
+  transform: translateX(4px);
+}
+
+.dispositivo-rank {
+  grid-row: 1 / 3;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--blue), #0056cc);
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 16px;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 120, 255, 0.2);
+}
+
+.dispositivo-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dispositivo-nombre {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dispositivo-icon {
+  font-size: 18px;
+}
+
+.dispositivo-categoria {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.dispositivo-consumo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.consumo-valor {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--blue);
+}
+
+.consumo-costo {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.dispositivo-barra-container {
+  grid-column: 2 / 4;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.dispositivo-barra {
+  height: 100%;
+  border-radius: 12px;
+  transition: width 0.8s ease;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 120, 255, 0.3);
+}
+
+.dispositivo-porcentaje {
+  position: absolute;
+  right: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* ============================================
+   GRÁFICO DE PIE
+============================================ */
+
+.pie-chart-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.pie-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.legend-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateX(4px);
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.legend-nombre {
+  flex: 1;
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.legend-valor {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--blue);
+  min-width: 80px;
+  text-align: right;
+}
+
+.legend-porcentaje {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  min-width: 50px;
+  text-align: right;
+}
+
+/* ============================================
+   INSIGHTS Y CONSEJOS
+============================================ */
+
+.insights-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.insight-card {
+  background: var(--dark-card);
+  border: 1px solid var(--border-gray);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  gap: 16px;
+  transition: all 0.3s ease;
+}
+
+.insight-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 120, 255, 0.15);
+}
+
+.insight-card.tip {
+  border-left: 4px solid var(--blue);
+}
+
+.insight-card.achievement {
+  border-left: 4px solid var(--green);
+}
+
+.insight-card.warning {
+  border-left: 4px solid var(--red);
+}
+
+.insight-icon {
+  font-size: 36px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.insight-content h3 {
+  font-size: 16px;
+  margin: 0 0 8px 0;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.insight-content p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.insight-content strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* ============================================
+   LOADING STATE
+============================================ */
+
+.consumo-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  color: var(--text-secondary);
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--border-gray);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   RESPONSIVE
+============================================ */
+
+@media (max-width: 1200px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .consumo-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .consumo-header h1 {
+    font-size: 24px;
+  }
+
+  .periodo-selector {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .periodo-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .metricas-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .metrica-valor {
+    font-size: 28px;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-container {
+    overflow-x: auto;
+  }
+
+  .dispositivo-item {
+    grid-template-columns: 36px 1fr;
+    gap: 10px;
+  }
+
+  .dispositivo-rank {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .dispositivo-consumo {
+    grid-column: 2;
+    align-items: flex-start;
+  }
+
+  .dispositivo-barra-container {
+    grid-column: 1 / 3;
+  }
+
+  .insights-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .consumo-container {
+    padding: 0;
+  }
+
+  .chart-section {
+    padding: 16px;
+  }
+
+  .section-header h2 {
+    font-size: 18px;
+  }
+
+  .metrica-card {
+    padding: 20px;
+  }
+
+  .metrica-valor {
+    font-size: 24px;
+  }
+
+  .dispositivo-nombre {
+    font-size: 14px;
+  }
+
+  .consumo-valor {
+    font-size: 14px;
+  }
+
+  .insight-icon {
+    font-size: 28px;
+  }
+
+  .insight-content h3 {
+    font-size: 15px;
+  }
+
+  .insight-content p {
+    font-size: 13px;
+  }
+}

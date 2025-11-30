@@ -3,6 +3,7 @@ import "../styles/Dashboard.css";
 import logo from "../assets/powerflow-logo.png"; 
 import Dispositivos from "./Dispositivos";
 import Notificaciones from "./Notificaciones";
+import Consumo from "./Consumo";
 
 export default function Dashboard({ onLogout }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -89,16 +90,17 @@ export default function Dashboard({ onLogout }) {
     }
   };
 
-  // Cargar notificaciones y actualizar contador
+  // ✅ CORREGIDO: Cargar notificaciones y filtrar las descartadas
   const cargarNotificaciones = async () => {
     try {
       const token = localStorage.getItem("token");
       
-      // Verificar si ya visitó notificaciones en esta sesión (no en este día)
+      // ✅ FIX BUG 1: Verificar si ya visitó notificaciones EN ESTA SESIÓN
       const visitoNotificacionesEstaSesion = sessionStorage.getItem("visito_notificaciones");
       
       // Si ya visitó en esta sesión, no mostrar el badge
       if (visitoNotificacionesEstaSesion === "true") {
+        console.log("✓ Ya visitó notificaciones en esta sesión, badge oculto");
         setNotificacionesCount(0);
         return;
       }
@@ -112,7 +114,20 @@ export default function Dashboard({ onLogout }) {
 
       if (response.ok) {
         const data = await response.json();
-        const count = data.total_sin_registro || 0;
+        
+        // ✅ FIX BUG 2: Obtener dispositivos descartados en esta sesión
+        const descartadosStr = sessionStorage.getItem("notificaciones_descartadas");
+        const descartados = descartadosStr ? JSON.parse(descartadosStr) : [];
+        
+        console.log("Dispositivos descartados en esta sesión:", descartados);
+        
+        // Filtrar los dispositivos descartados
+        const dispositivosPendientes = data.dispositivos.filter(
+          d => !descartados.includes(d.id)
+        );
+        
+        const count = dispositivosPendientes.length;
+        console.log(`📊 Notificaciones: ${count} pendientes (${descartados.length} descartadas)`);
         setNotificacionesCount(count);
       }
     } catch (error) {
@@ -125,6 +140,9 @@ export default function Dashboard({ onLogout }) {
     if (window.confirm("¿Seguro que deseas cerrar sesión?")) {
       localStorage.removeItem("token");
       localStorage.removeItem("usuario");
+      // ✅ FIX: Limpiar sessionStorage al cerrar sesión
+      sessionStorage.clear();
+      console.log("✓ SessionStorage limpiado al cerrar sesión");
       if (onLogout) {
         onLogout();
       }
@@ -140,6 +158,7 @@ export default function Dashboard({ onLogout }) {
     if (section === "Notificaciones") {
       setNotificacionesCount(0);
       sessionStorage.setItem("visito_notificaciones", "true");
+      console.log("✓ Usuario entró a Notificaciones, badge ocultado para esta sesión");
     }
     
     // Limpiar el dispositivo para editar cuando se cambia de sección
@@ -160,13 +179,19 @@ export default function Dashboard({ onLogout }) {
     }
   };
 
+  // ✅ Callback para cuando se descarta una notificación
+  const handleNotificacionDescartada = () => {
+    // Recargar el contador de notificaciones
+    cargarNotificaciones();
+  };
+
   const navItems = [
     { icon: "🏠", text: "Inicio" },
     { icon: "🔔", text: "Notificaciones", badge: notificacionesCount },
     { icon: "💡", text: "Dispositivos" },
     { icon: "📊", text: "Consumo" },
-    { icon: "🤖", text: "IA" },
     { icon: "📈", text: "Reportes" },
+    { icon: "🤖", text: "IA" },
     { icon: "⚙️", text: "Configuración" }
   ];
 
@@ -399,13 +424,21 @@ export default function Dashboard({ onLogout }) {
           )}
 
           {activeSection === "Notificaciones" && (
-            <Notificaciones onNavigateToDevice={handleNavigateToDevice} />
+            <Notificaciones 
+              onNavigateToDevice={handleNavigateToDevice}
+              onNotificacionDescartada={handleNotificacionDescartada}
+            />
+          )}
+
+          {activeSection === "Consumo" && (
+            <Consumo />
           )}
 
           {activeSection !== "Inicio" && 
            activeSection !== "Perfil" && 
            activeSection !== "Dispositivos" && 
-           activeSection !== "Notificaciones" && (
+           activeSection !== "Notificaciones" && 
+           activeSection !== "Consumo" && (
             <section className="cards-grid">
               <div className="card" style={{ gridColumn: "1 / -1", padding: "30px", textAlign: "center" }}>
                 <h2>{activeSection}</h2>

@@ -139,7 +139,10 @@ def guardar_registros(usuario_actual, dispositivo_id):
 @registro_uso_bp.route('/api/notificaciones/dispositivos-sin-registro', methods=['GET'])
 @token_required
 def obtener_dispositivos_sin_registro(usuario_actual):
-    """Obtiene los dispositivos del usuario que no tienen registro para hoy"""
+    """
+    Obtiene los dispositivos del usuario que no tienen registro para hoy.
+    Este es el endpoint que usa el sistema de notificaciones.
+    """
     
     hoy = date.today()
     
@@ -147,6 +150,15 @@ def obtener_dispositivos_sin_registro(usuario_actual):
     dispositivos = Dispositivo.query.filter_by(usuario_id=usuario_actual.id).all()
     
     dispositivos_sin_registro = []
+    
+    # Iconos por categoría
+    iconos = {
+        "Iluminación": "💡",
+        "Climatización": "❄️",
+        "Electrodomésticos": "🧊",
+        "Electrónica": "💻",
+        "Otros": "⚡"
+    }
     
     for dispositivo in dispositivos:
         # Verificar si tiene registro hoy
@@ -156,11 +168,16 @@ def obtener_dispositivos_sin_registro(usuario_actual):
         ).first()
         
         if not registro_hoy:
+            # No tiene registro para hoy
             dispositivos_sin_registro.append({
                 "id": dispositivo.id,
                 "nombre": dispositivo.nombre,
-                "categoria": dispositivo.categoria,
-                "mensaje": f"No has registrado el uso de '{dispositivo.nombre}' para hoy"
+                "categoria": dispositivo.categoria or "Otros",
+                "icono": iconos.get(dispositivo.categoria, "⚡"),
+                "potencia_watts": dispositivo.potencia_watts,
+                "mensaje": f"No has registrado el uso de '{dispositivo.nombre}' para hoy",
+                "fecha": hoy.isoformat(),
+                "leida": False  # Para el frontend
             })
     
     return jsonify({
