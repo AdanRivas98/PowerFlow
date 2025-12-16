@@ -1,0 +1,1020 @@
+import { useState, useEffect } from "react";
+import "../styles/Configuracion.css";
+
+export default function Configuracion() {
+  const [activeSection, setActiveSection] = useState("perfil");
+  const [usuario, setUsuario] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [mensaje, setMensaje] = useState({ texto: "", tipo: "" });
+
+  // Estados para configuración
+  const [perfil, setPerfil] = useState({
+    nombre: "",
+    correo: "",
+    correo_nuevo: ""
+  });
+
+  const [password, setPassword] = useState({
+    actual: "",
+    nueva: "",
+    confirmar: ""
+  });
+
+  const [config, setConfig] = useState({
+    tarifa_kwh: 3.7,
+    meta_mensual_kwh: 250,
+    meta_mensual_lps: 925,
+    dia_corte: 1,
+    proveedor: "ENEE"
+  });
+
+  const [notificaciones, setNotificaciones] = useState({
+    consumo_alto: true,
+    recordatorio_diario: true,
+    recomendaciones_ia: true,
+    logros: true,
+    email_semanal: false,
+    email_mensual: true,
+    email_critico: true
+  });
+
+  const [apariencia, setApariencia] = useState({
+    tema: "dark",
+    color_acento: "blue",
+    tamano_texto: "medium"
+  });
+
+  const API_URL = "http://localhost:5000";
+
+  useEffect(() => {
+    cargarDatosUsuario();
+  }, []);
+
+  const cargarDatosUsuario = async () => {
+    try {
+      setLoading(true);
+      const usuarioData = localStorage.getItem("usuario");
+      
+      if (usuarioData) {
+        const user = JSON.parse(usuarioData);
+        setUsuario(user);
+        setPerfil({
+          nombre: user.nombre || "",
+          correo: user.correo || "",
+          correo_nuevo: ""
+        });
+      }
+
+      // Cargar configuraciones guardadas del usuario
+      const token = localStorage.getItem("token");
+      
+      const response = await fetch(`${API_URL}/api/configuracion`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (data.config) {
+          setConfig({
+            tarifa_kwh: data.config.tarifa_kwh || 3.7,
+            meta_mensual_kwh: data.config.meta_mensual_kwh || 250,
+            meta_mensual_lps: data.config.meta_mensual_lps || 925,
+            dia_corte: data.config.dia_corte || 1,
+            proveedor: data.config.proveedor || "ENEE"
+          });
+        }
+
+        if (data.notificaciones) {
+          setNotificaciones({
+            ...notificaciones,
+            ...data.notificaciones
+          });
+        }
+
+        if (data.apariencia) {
+          setApariencia({
+            ...apariencia,
+            ...data.apariencia
+          });
+        }
+      }
+
+    } catch (error) {
+      console.error("Error al cargar datos:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const mostrarMensaje = (texto, tipo = "success") => {
+    setMensaje({ texto, tipo });
+    setTimeout(() => setMensaje({ texto: "", tipo: "" }), 4000);
+  };
+
+  // PERFIL - Actualizar información
+  const handleActualizarPerfil = async () => {
+    if (!perfil.nombre.trim()) {
+      mostrarMensaje("El nombre no puede estar vacío", "error");
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(`${API_URL}/api/usuarios/perfil`, {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          nombre: perfil.nombre,
+          correo: perfil.correo_nuevo || perfil.correo
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Actualizar localStorage
+        const usuarioActualizado = { ...usuario, nombre: perfil.nombre };
+        if (perfil.correo_nuevo) {
+          usuarioActualizado.correo = perfil.correo_nuevo;
+        }
+        localStorage.setItem("usuario", JSON.stringify(usuarioActualizado));
+        setUsuario(usuarioActualizado);
+        setPerfil({ ...perfil, correo: perfil.correo_nuevo || perfil.correo, correo_nuevo: "" });
+        
+        mostrarMensaje("Perfil actualizado correctamente", "success");
+      } else {
+        mostrarMensaje(data.error || "Error al actualizar perfil", "error");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      mostrarMensaje("Error de conexión", "error");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // PERFIL - Cambiar contraseña
+  const handleCambiarPassword = async () => {
+    if (!password.actual || !password.nueva || !password.confirmar) {
+      mostrarMensaje("Completa todos los campos", "error");
+      return;
+    }
+
+    if (password.nueva.length < 6) {
+      mostrarMensaje("La contraseña debe tener al menos 6 caracteres", "error");
+      return;
+    }
+
+    if (password.nueva !== password.confirmar) {
+      mostrarMensaje("Las contraseñas no coinciden", "error");
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(`${API_URL}/api/usuarios/password`, {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          password_actual: password.actual,
+          password_nueva: password.nueva
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setPassword({ actual: "", nueva: "", confirmar: "" });
+        mostrarMensaje("Contraseña actualizada correctamente", "success");
+      } else {
+        mostrarMensaje(data.error || "Error al cambiar contraseña", "error");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      mostrarMensaje("Error de conexión", "error");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // ENERGÉTICA - Guardar configuración
+  const handleGuardarConfigEnergetica = async () => {
+    if (config.tarifa_kwh <= 0) {
+      mostrarMensaje("La tarifa debe ser mayor a 0", "error");
+      return;
+    }
+
+    if (config.meta_mensual_kwh <= 0) {
+      mostrarMensaje("La meta debe ser mayor a 0", "error");
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(`${API_URL}/api/configuracion/energetica`, {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(config)
+      });
+
+      if (response.ok) {
+        mostrarMensaje("Configuración energética guardada", "success");
+      } else {
+        mostrarMensaje("Error al guardar configuración", "error");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      mostrarMensaje("Error de conexión", "error");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Calcular meta en Lempiras al cambiar kWh o tarifa
+  useEffect(() => {
+    const meta_lps = (config.meta_mensual_kwh * config.tarifa_kwh).toFixed(2);
+    if (meta_lps !== config.meta_mensual_lps) {
+      setConfig(prev => ({ ...prev, meta_mensual_lps: parseFloat(meta_lps) }));
+    }
+  }, [config.meta_mensual_kwh, config.tarifa_kwh]);
+
+  // NOTIFICACIONES - Guardar
+  const handleGuardarNotificaciones = async () => {
+    try {
+      setSaving(true);
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(`${API_URL}/api/configuracion/notificaciones`, {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(notificaciones)
+      });
+
+      if (response.ok) {
+        mostrarMensaje("Notificaciones configuradas", "success");
+      } else {
+        mostrarMensaje("Error al guardar notificaciones", "error");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      mostrarMensaje("Error de conexión", "error");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // APARIENCIA - Guardar
+  const handleGuardarApariencia = async () => {
+    try {
+      setSaving(true);
+      
+      // Aplicar tema inmediatamente
+      document.documentElement.setAttribute('data-theme', apariencia.tema);
+      document.documentElement.setAttribute('data-accent', apariencia.color_acento);
+      document.documentElement.setAttribute('data-text-size', apariencia.tamano_texto);
+
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(`${API_URL}/api/configuracion/apariencia`, {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(apariencia)
+      });
+
+      if (response.ok) {
+        localStorage.setItem("apariencia", JSON.stringify(apariencia));
+        mostrarMensaje("Apariencia actualizada", "success");
+      } else {
+        mostrarMensaje("Error al guardar apariencia", "error");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      mostrarMensaje("Error de conexión", "error");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // DATOS - Exportar
+  const handleExportarDatos = async (tipo) => {
+    try {
+      setSaving(true);
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(`${API_URL}/api/exportar/${tipo}`, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `powerflow_${tipo}_${new Date().toISOString().split('T')[0]}.${tipo === 'consumos' ? 'csv' : 'json'}`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        mostrarMensaje(`${tipo.charAt(0).toUpperCase() + tipo.slice(1)} exportados correctamente`, "success");
+      } else {
+        mostrarMensaje("Error al exportar datos", "error");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      mostrarMensaje("Error de conexión", "error");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // PERFIL - Eliminar cuenta
+  const handleEliminarCuenta = async () => {
+    const confirmacion = window.prompt(
+      'Esta acción es IRREVERSIBLE. Todos tus datos serán eliminados permanentemente.\n\n' +
+      'Escribe "ELIMINAR MI CUENTA" para confirmar:'
+    );
+
+    if (confirmacion !== "ELIMINAR MI CUENTA") {
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(`${API_URL}/api/usuarios/eliminar`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
+
+      if (response.ok) {
+        localStorage.clear();
+        window.location.href = "/";
+      } else {
+        mostrarMensaje("Error al eliminar cuenta", "error");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      mostrarMensaje("Error de conexión", "error");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const menuItems = [
+    { id: "perfil", icon: "👤", label: "Perfil" },
+    { id: "energetica", icon: "⚡", label: "Energética" },
+    { id: "notificaciones", icon: "🔔", label: "Notificaciones" },
+    { id: "apariencia", icon: "🎨", label: "Apariencia" },
+    { id: "datos", icon: "📊", label: "Datos" },
+    { id: "acerca", icon: "ℹ️", label: "Acerca de" }
+  ];
+
+  if (loading) {
+    return (
+      <div className="config-loading">
+        <div className="spinner"></div>
+        <p>Cargando configuración...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="configuracion-container">
+      {/* Header */}
+      <div className="config-header">
+        <div className="config-header-content">
+          <div className="config-header-icon">⚙️</div>
+          <div>
+            <h1>Configuración</h1>
+            <p>Personaliza tu experiencia PowerFlow</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Mensaje de feedback */}
+      {mensaje.texto && (
+        <div className={`config-mensaje ${mensaje.tipo}`}>
+          <span className="mensaje-icono">
+            {mensaje.tipo === "success" ? "✅" : "❌"}
+          </span>
+          <span>{mensaje.texto}</span>
+        </div>
+      )}
+
+      {/* Layout principal */}
+      <div className="config-layout">
+        {/* Sidebar */}
+        <aside className="config-sidebar">
+          <nav className="config-nav">
+            {menuItems.map(item => (
+              <button
+                key={item.id}
+                className={`config-nav-item ${activeSection === item.id ? "active" : ""}`}
+                onClick={() => setActiveSection(item.id)}
+              >
+                <span className="nav-item-icon">{item.icon}</span>
+                <span className="nav-item-label">{item.label}</span>
+              </button>
+            ))}
+          </nav>
+        </aside>
+
+        {/* Panel principal */}
+        <main className="config-main">
+          
+          {/* SECCIÓN: PERFIL */}
+          {activeSection === "perfil" && (
+            <div className="config-section">
+              <h2 className="section-title">👤 Perfil de Usuario</h2>
+
+              {/* Información personal */}
+              <div className="config-card">
+                <h3 className="card-title">Información Personal</h3>
+                
+                <div className="form-group">
+                  <label>Nombre completo</label>
+                  <input
+                    type="text"
+                    value={perfil.nombre}
+                    onChange={(e) => setPerfil({ ...perfil, nombre: e.target.value })}
+                    placeholder="Tu nombre"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Correo electrónico actual</label>
+                  <input
+                    type="email"
+                    value={perfil.correo}
+                    disabled
+                    className="input-disabled"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Nuevo correo electrónico (opcional)</label>
+                  <input
+                    type="email"
+                    value={perfil.correo_nuevo}
+                    onChange={(e) => setPerfil({ ...perfil, correo_nuevo: e.target.value })}
+                    placeholder="nuevo@ejemplo.com"
+                  />
+                  <small className="form-help">Deja vacío si no deseas cambiar tu correo</small>
+                </div>
+
+                <button 
+                  className="btn-primary"
+                  onClick={handleActualizarPerfil}
+                  disabled={saving}
+                >
+                  {saving ? "Guardando..." : "Guardar Cambios"}
+                </button>
+              </div>
+
+              {/* Cambiar contraseña */}
+              <div className="config-card">
+                <h3 className="card-title">Cambiar Contraseña</h3>
+                
+                <div className="form-group">
+                  <label>Contraseña actual</label>
+                  <input
+                    type="password"
+                    value={password.actual}
+                    onChange={(e) => setPassword({ ...password, actual: e.target.value })}
+                    placeholder="••••••••"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Nueva contraseña</label>
+                  <input
+                    type="password"
+                    value={password.nueva}
+                    onChange={(e) => setPassword({ ...password, nueva: e.target.value })}
+                    placeholder="••••••••"
+                  />
+                  <small className="form-help">Mínimo 6 caracteres</small>
+                </div>
+
+                <div className="form-group">
+                  <label>Confirmar nueva contraseña</label>
+                  <input
+                    type="password"
+                    value={password.confirmar}
+                    onChange={(e) => setPassword({ ...password, confirmar: e.target.value })}
+                    placeholder="••••••••"
+                  />
+                </div>
+
+                <button 
+                  className="btn-primary"
+                  onClick={handleCambiarPassword}
+                  disabled={saving}
+                >
+                  {saving ? "Cambiando..." : "Cambiar Contraseña"}
+                </button>
+              </div>
+
+              {/* Zona de peligro */}
+              <div className="config-card danger-zone">
+                <h3 className="card-title">🚨 Zona de Peligro</h3>
+                <p className="danger-text">
+                  Una vez elimines tu cuenta, no hay vuelta atrás. Por favor, ten certeza.
+                </p>
+                <button 
+                  className="btn-danger"
+                  onClick={handleEliminarCuenta}
+                  disabled={saving}
+                >
+                  Eliminar mi cuenta
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* SECCIÓN: ENERGÉTICA */}
+          {activeSection === "energetica" && (
+            <div className="config-section">
+              <h2 className="section-title">⚡ Configuración Energética</h2>
+
+              <div className="config-card">
+                <h3 className="card-title">Tarifa Eléctrica</h3>
+                
+                <div className="form-group">
+                  <label>Tarifa por kWh (Lempiras)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={config.tarifa_kwh}
+                    onChange={(e) => setConfig({ ...config, tarifa_kwh: parseFloat(e.target.value) || 0 })}
+                  />
+                  <small className="form-help">Tarifa promedio en Honduras: L 3.70/kWh</small>
+                </div>
+
+                <div className="form-group">
+                  <label>Proveedor de energía</label>
+                  <select
+                    value={config.proveedor}
+                    onChange={(e) => setConfig({ ...config, proveedor: e.target.value })}
+                  >
+                    <option value="ENEE">ENEE</option>
+                    <option value="Privado">Privado</option>
+                    <option value="Otro">Otro</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Día de corte del mes</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="31"
+                    value={config.dia_corte}
+                    onChange={(e) => setConfig({ ...config, dia_corte: parseInt(e.target.value) || 1 })}
+                  />
+                  <small className="form-help">Día en que llega tu factura</small>
+                </div>
+              </div>
+
+              <div className="config-card">
+                <h3 className="card-title">Meta de Consumo</h3>
+                
+                <div className="form-group">
+                  <label>Meta mensual (kWh)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={config.meta_mensual_kwh}
+                    onChange={(e) => setConfig({ ...config, meta_mensual_kwh: parseFloat(e.target.value) || 0 })}
+                  />
+                </div>
+
+                <div className="meta-preview">
+                  <div className="meta-preview-label">Equivale a:</div>
+                  <div className="meta-preview-value">
+                    L {config.meta_mensual_lps.toFixed(2)}/mes
+                  </div>
+                </div>
+
+                <button 
+                  className="btn-primary"
+                  onClick={handleGuardarConfigEnergetica}
+                  disabled={saving}
+                >
+                  {saving ? "Guardando..." : "Guardar Configuración"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* SECCIÓN: NOTIFICACIONES */}
+          {activeSection === "notificaciones" && (
+            <div className="config-section">
+              <h2 className="section-title">🔔 Notificaciones</h2>
+
+              <div className="config-card">
+                <h3 className="card-title">Notificaciones de la App</h3>
+                
+                <div className="toggle-group">
+                  <div className="toggle-item">
+                    <div className="toggle-info">
+                      <span className="toggle-label">Alertas de consumo alto</span>
+                      <small className="toggle-description">Te avisamos cuando superes tu meta</small>
+                    </div>
+                    <label className="toggle-switch">
+                      <input
+                        type="checkbox"
+                        checked={notificaciones.consumo_alto}
+                        onChange={(e) => setNotificaciones({ ...notificaciones, consumo_alto: e.target.checked })}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="toggle-item">
+                    <div className="toggle-info">
+                      <span className="toggle-label">Recordatorios diarios</span>
+                      <small className="toggle-description">Recordatorio para registrar tu consumo</small>
+                    </div>
+                    <label className="toggle-switch">
+                      <input
+                        type="checkbox"
+                        checked={notificaciones.recordatorio_diario}
+                        onChange={(e) => setNotificaciones({ ...notificaciones, recordatorio_diario: e.target.checked })}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="toggle-item">
+                    <div className="toggle-info">
+                      <span className="toggle-label">Recomendaciones de IA</span>
+                      <small className="toggle-description">Sugerencias personalizadas de ahorro</small>
+                    </div>
+                    <label className="toggle-switch">
+                      <input
+                        type="checkbox"
+                        checked={notificaciones.recomendaciones_ia}
+                        onChange={(e) => setNotificaciones({ ...notificaciones, recomendaciones_ia: e.target.checked })}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="toggle-item">
+                    <div className="toggle-info">
+                      <span className="toggle-label">Logros y metas</span>
+                      <small className="toggle-description">Celebra tus logros de ahorro</small>
+                    </div>
+                    <label className="toggle-switch">
+                      <input
+                        type="checkbox"
+                        checked={notificaciones.logros}
+                        onChange={(e) => setNotificaciones({ ...notificaciones, logros: e.target.checked })}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="config-card">
+                <h3 className="card-title">Notificaciones por Email</h3>
+                
+                <div className="toggle-group">
+                  <div className="toggle-item">
+                    <div className="toggle-info">
+                      <span className="toggle-label">Reporte semanal</span>
+                      <small className="toggle-description">Resumen de tu consumo cada semana</small>
+                    </div>
+                    <label className="toggle-switch">
+                      <input
+                        type="checkbox"
+                        checked={notificaciones.email_semanal}
+                        onChange={(e) => setNotificaciones({ ...notificaciones, email_semanal: e.target.checked })}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="toggle-item">
+                    <div className="toggle-info">
+                      <span className="toggle-label">Reporte mensual</span>
+                      <small className="toggle-description">Análisis completo cada mes</small>
+                    </div>
+                    <label className="toggle-switch">
+                      <input
+                        type="checkbox"
+                        checked={notificaciones.email_mensual}
+                        onChange={(e) => setNotificaciones({ ...notificaciones, email_mensual: e.target.checked })}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="toggle-item">
+                    <div className="toggle-info">
+                      <span className="toggle-label">Alertas críticas</span>
+                      <small className="toggle-description">Avisos importantes sobre tu cuenta</small>
+                    </div>
+                    <label className="toggle-switch">
+                      <input
+                        type="checkbox"
+                        checked={notificaciones.email_critico}
+                        onChange={(e) => setNotificaciones({ ...notificaciones, email_critico: e.target.checked })}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <button 
+                  className="btn-primary"
+                  onClick={handleGuardarNotificaciones}
+                  disabled={saving}
+                >
+                  {saving ? "Guardando..." : "Guardar Preferencias"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* SECCIÓN: APARIENCIA */}
+          {activeSection === "apariencia" && (
+            <div className="config-section">
+              <h2 className="section-title">🎨 Apariencia</h2>
+
+              <div className="config-card">
+                <h3 className="card-title">Tema Visual</h3>
+                
+                <div className="theme-selector">
+                  <div 
+                    className={`theme-option ${apariencia.tema === "dark" ? "active" : ""}`}
+                    onClick={() => setApariencia({ ...apariencia, tema: "dark" })}
+                  >
+                    <div className="theme-preview dark-preview">
+                      <div className="preview-header"></div>
+                      <div className="preview-content"></div>
+                    </div>
+                    <span className="theme-label">Oscuro</span>
+                    {apariencia.tema === "dark" && <span className="theme-check">✓</span>}
+                  </div>
+
+                  <div 
+                    className={`theme-option ${apariencia.tema === "light" ? "active" : ""}`}
+                    onClick={() => setApariencia({ ...apariencia, tema: "light" })}
+                  >
+                    <div className="theme-preview light-preview">
+                      <div className="preview-header"></div>
+                      <div className="preview-content"></div>
+                    </div>
+                    <span className="theme-label">Claro</span>
+                    {apariencia.tema === "light" && <span className="theme-check">✓</span>}
+                  </div>
+
+                  <div 
+                    className={`theme-option ${apariencia.tema === "auto" ? "active" : ""}`}
+                    onClick={() => setApariencia({ ...apariencia, tema: "auto" })}
+                  >
+                    <div className="theme-preview auto-preview">
+                      <div className="preview-header"></div>
+                      <div className="preview-content"></div>
+                    </div>
+                    <span className="theme-label">Automático</span>
+                    {apariencia.tema === "auto" && <span className="theme-check">✓</span>}
+                  </div>
+                </div>
+              </div>
+
+              <div className="config-card">
+                <h3 className="card-title">Color de Acento</h3>
+                
+                <div className="color-selector">
+                  {[
+                    { id: "blue", color: "#0078FF", label: "Azul" },
+                    { id: "green", color: "#A6FF00", label: "Verde" },
+                    { id: "purple", color: "#9333ea", label: "Morado" },
+                    { id: "orange", color: "#f59e0b", label: "Naranja" }
+                  ].map(item => (
+                    <div
+                      key={item.id}
+                      className={`color-option ${apariencia.color_acento === item.id ? "active" : ""}`}
+                      onClick={() => setApariencia({ ...apariencia, color_acento: item.id })}
+                    >
+                      <div 
+                        className="color-circle" 
+                        style={{ backgroundColor: item.color }}
+                      >
+                        {apariencia.color_acento === item.id && <span>✓</span>}
+                      </div>
+                      <span className="color-label">{item.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="config-card">
+                <h3 className="card-title">Tamaño de Texto</h3>
+                
+                <div className="size-selector">
+                  {[
+                    { id: "small", label: "Pequeño" },
+                    { id: "medium", label: "Mediano" },
+                    { id: "large", label: "Grande" }
+                  ].map(item => (
+                    <button
+                      key={item.id}
+                      className={`size-option ${apariencia.tamano_texto === item.id ? "active" : ""}`}
+                      onClick={() => setApariencia({ ...apariencia, tamano_texto: item.id })}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+
+                <button 
+                  className="btn-primary"
+                  onClick={handleGuardarApariencia}
+                  disabled={saving}
+                >
+                  {saving ? "Aplicando..." : "Aplicar Cambios"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* SECCIÓN: DATOS */}
+          {activeSection === "datos" && (
+            <div className="config-section">
+              <h2 className="section-title">📊 Datos y Exportación</h2>
+
+              <div className="config-card">
+                <h3 className="card-title">Exportar Datos</h3>
+                <p className="card-description">
+                  Descarga tus datos en diferentes formatos
+                </p>
+                
+                <div className="export-grid">
+                  <div className="export-item">
+                    <div className="export-icon">📄</div>
+                    <div className="export-info">
+                      <h4>Consumos</h4>
+                      <p>Historial completo en CSV</p>
+                    </div>
+                    <button 
+                      className="btn-export"
+                      onClick={() => handleExportarDatos('consumos')}
+                      disabled={saving}
+                    >
+                      Descargar CSV
+                    </button>
+                  </div>
+
+                  <div className="export-item">
+                    <div className="export-icon">💾</div>
+                    <div className="export-info">
+                      <h4>Dispositivos</h4>
+                      <p>Lista de dispositivos en JSON</p>
+                    </div>
+                    <button 
+                      className="btn-export"
+                      onClick={() => handleExportarDatos('dispositivos')}
+                      disabled={saving}
+                    >
+                      Descargar JSON
+                    </button>
+                  </div>
+
+                  <div className="export-item">
+                    <div className="export-icon">📊</div>
+                    <div className="export-info">
+                      <h4>Reportes</h4>
+                      <p>Análisis completo en PDF</p>
+                    </div>
+                    <button 
+                      className="btn-export"
+                      onClick={() => handleExportarDatos('reportes')}
+                      disabled={saving}
+                    >
+                      Descargar PDF
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* SECCIÓN: ACERCA DE */}
+          {activeSection === "acerca" && (
+            <div className="config-section">
+              <h2 className="section-title">ℹ️ Acerca de PowerFlow</h2>
+
+              <div className="config-card about-card">
+                <div className="about-logo">
+                  <span className="about-icon">⚡</span>
+                  <h3>PowerFlow</h3>
+                  <p className="about-tagline">Gestión Inteligente de Energía</p>
+                </div>
+
+                <div className="about-info">
+                  <div className="info-row">
+                    <span className="info-label">Versión:</span>
+                    <span className="info-value">1.0.0</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="info-label">Última actualización:</span>
+                    <span className="info-value">Diciembre 2024</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="info-label">Desarrollado por:</span>
+                    <span className="info-value">PowerFlow Team</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="config-card">
+                <h3 className="card-title">Enlaces Útiles</h3>
+                
+                <div className="links-grid">
+                  <a href="#" className="link-item">
+                    <span className="link-icon">📖</span>
+                    <span>Centro de Ayuda</span>
+                  </a>
+                  <a href="#" className="link-item">
+                    <span className="link-icon">📧</span>
+                    <span>Contactar Soporte</span>
+                  </a>
+                  <a href="#" className="link-item">
+                    <span className="link-icon">📋</span>
+                    <span>Términos y Condiciones</span>
+                  </a>
+                  <a href="#" className="link-item">
+                    <span className="link-icon">🔒</span>
+                    <span>Política de Privacidad</span>
+                  </a>
+                </div>
+              </div>
+
+              <div className="config-card">
+                <h3 className="card-title">Redes Sociales</h3>
+                
+                <div className="social-links">
+                  <a href="#" className="social-link facebook">
+                    <span>📘</span> Facebook
+                  </a>
+                  <a href="#" className="social-link twitter">
+                    <span>🐦</span> Twitter
+                  </a>
+                  <a href="#" className="social-link instagram">
+                    <span>📸</span> Instagram
+                  </a>
+                </div>
+              </div>
+
+              <div className="config-card">
+                <p className="copyright">
+                  © 2024 PowerFlow. Todos los derechos reservados.
+                </p>
+              </div>
+            </div>
+          )}
+
+        </main>
+      </div>
+    </div>
+  );
+}

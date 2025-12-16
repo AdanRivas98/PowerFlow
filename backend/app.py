@@ -6,7 +6,9 @@ from routes.usuario_routes import usuario_bp
 from routes.dispositivo_routes import dispositivo_bp
 from routes.registro_uso_routes import registro_uso_bp
 from routes.consumo_routes import consumo_bp
+from routes.ia_routes import ia_bp
 from flask_migrate import Migrate 
+from routes.configuracion_routes import configuracion_bp
 
 def create_app():
     app = Flask(__name__)
@@ -31,6 +33,8 @@ def create_app():
     app.register_blueprint(dispositivo_bp)
     app.register_blueprint(registro_uso_bp)
     app.register_blueprint(consumo_bp) 
+    app.register_blueprint(ia_bp)
+    app.register_blueprint(configuracion_bp)
 
     # Registramos modelos y creamos tablas
     with app.app_context():

@@ -1,0 +1,891 @@
+/* IA.css - Estilos para el apartado de Inteligencia Artificial */
+
+:root {
+  --blue: #0078FF;
+  --green: #A6FF00;
+  --dark-bg: #0D1117;
+  --dark-card: #161B22;
+  --border-gray: #21262D;
+  --purple: #9333ea;
+  --orange: #f59e0b;
+  --red: #ef4444;
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+  --text-tertiary: #6b7280;
+}
+
+/* Container Principal */
+.ia-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Loading */
+.ia-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 20px;
+}
+
+.ia-spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid var(--border-gray);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.ia-loading p {
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+
+/* Header */
+.ia-header {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-gray);
+}
+
+.ia-header-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.ia-header-icon {
+  font-size: 48px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.ia-header h1 {
+  font-size: 32px;
+  color: var(--green);
+  margin: 0;
+  font-weight: 700;
+}
+
+.ia-header p {
+  color: var(--text-secondary);
+  font-size: 16px;
+  margin: 5px 0 0 0;
+}
+
+/* Grid Principal */
+.ia-main-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 25px;
+  margin-bottom: 25px;
+}
+
+/* Cards IA */
+.ia-card {
+  background: var(--dark-card);
+  border: 1px solid var(--border-gray);
+  border-radius: 16px;
+  padding: 25px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.ia-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--blue), var(--green));
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.ia-card:hover {
+  border-color: var(--blue);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 120, 255, 0.2);
+}
+
+.ia-card:hover::before {
+  transform: scaleX(1);
+}
+
+/* Card Header */
+.ia-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.ia-card-header h2 {
+  font-size: 20px;
+  color: var(--text-primary);
+  margin: 0;
+  font-weight: 600;
+}
+
+.ia-badge {
+  padding: 6px 12px;
+  background: rgba(166, 255, 0, 0.1);
+  border: 1px solid rgba(166, 255, 0, 0.3);
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--green);
+  font-weight: 600;
+}
+
+.recomendaciones-badge {
+  background: rgba(147, 51, 234, 0.1);
+  border-color: rgba(147, 51, 234, 0.3);
+  color: var(--purple);
+}
+
+/* ========== PREDICCIONES ========== */
+.predicciones-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.prediccion-principal {
+  background: linear-gradient(135deg, rgba(0, 120, 255, 0.1), rgba(166, 255, 0, 0.05));
+  border: 1px solid rgba(0, 120, 255, 0.3);
+  border-radius: 12px;
+  padding: 25px;
+  text-align: center;
+}
+
+.prediccion-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.prediccion-valor {
+  font-size: 48px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--blue), var(--green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+  margin-bottom: 5px;
+}
+
+.prediccion-unidad {
+  font-size: 24px;
+  margin-left: 5px;
+}
+
+.prediccion-costo {
+  font-size: 20px;
+  color: var(--green);
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.prediccion-confianza {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.confianza-bar {
+  width: 100%;
+  max-width: 300px;
+  height: 8px;
+  background: var(--border-gray);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.confianza-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--blue), var(--green));
+  transition: width 0.5s ease;
+  border-radius: 4px;
+}
+
+.prediccion-confianza span {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* Grid de Predicciones Pequeñas */
+.predicciones-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+.prediccion-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-gray);
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.prediccion-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--blue);
+}
+
+.prediccion-icono {
+  font-size: 28px;
+}
+
+.prediccion-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.prediccion-titulo {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.prediccion-dato {
+  font-size: 16px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.prediccion-dato.ahorro {
+  color: var(--green);
+}
+
+/* Tendencia Badge */
+.tendencia-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.tendencia-badge.aumento {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: var(--red);
+}
+
+.tendencia-badge.disminucion {
+  background: rgba(166, 255, 0, 0.1);
+  border: 1px solid rgba(166, 255, 0, 0.3);
+  color: var(--green);
+}
+
+.tendencia-badge.estable {
+  background: rgba(147, 51, 234, 0.1);
+  border: 1px solid rgba(147, 51, 234, 0.3);
+  color: var(--purple);
+}
+
+.tendencia-icono {
+  font-size: 20px;
+}
+
+/* ========== PATRONES ========== */
+.patrones-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.patron-destacado {
+  background: linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(0, 120, 255, 0.05));
+  border: 1px solid rgba(147, 51, 234, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+}
+
+.patron-icono {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.patron-info h3 {
+  font-size: 18px;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+  font-weight: 600;
+}
+
+.patron-info p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0 0 10px 0;
+  line-height: 1.5;
+}
+
+.patron-frecuencia {
+  display: inline-block;
+  padding: 4px 10px;
+  background: rgba(147, 51, 234, 0.2);
+  border-radius: 12px;
+  font-size: 12px;
+  color: var(--purple);
+  font-weight: 500;
+}
+
+/* Insights */
+.insights-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.insights-titulo {
+  font-size: 16px;
+  color: var(--text-primary);
+  margin: 0 0 10px 0;
+  font-weight: 600;
+}
+
+.insight-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border: 1px solid var(--border-gray);
+}
+
+.insight-icono {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.insight-texto {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Horarios Pico */
+.horarios-pico {
+  margin-top: 10px;
+}
+
+.horarios-pico h3 {
+  font-size: 16px;
+  color: var(--text-primary);
+  margin: 0 0 12px 0;
+  font-weight: 600;
+}
+
+.horarios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.horario-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.horario-hora {
+  font-size: 14px;
+  color: var(--orange);
+  font-weight: 600;
+}
+
+.horario-consumo {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* Anomalías */
+.anomalias-section {
+  margin-top: 10px;
+}
+
+.anomalias-section h3 {
+  font-size: 16px;
+  color: var(--text-primary);
+  margin: 0 0 12px 0;
+  font-weight: 600;
+}
+
+.anomalia-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.anomalia-dispositivo {
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.anomalia-detalle {
+  font-size: 12px;
+  color: var(--red);
+}
+
+/* ========== RECOMENDACIONES ========== */
+.recomendaciones-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.recomendacion-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-gray);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.recomendacion-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  transition: all 0.3s ease;
+}
+
+.recomendacion-item.prioridad-alta::before {
+  background: var(--red);
+}
+
+.recomendacion-item.prioridad-media::before {
+  background: var(--orange);
+}
+
+.recomendacion-item.prioridad-baja::before {
+  background: var(--green);
+}
+
+.recomendacion-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.recomendacion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.recomendacion-icono {
+  font-size: 28px;
+}
+
+.recomendacion-prioridad {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.recomendacion-prioridad.alta {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--red);
+}
+
+.recomendacion-prioridad.media {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--orange);
+}
+
+.recomendacion-prioridad.baja {
+  background: rgba(166, 255, 0, 0.2);
+  color: var(--green);
+}
+
+.recomendacion-titulo {
+  font-size: 16px;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+  font-weight: 600;
+}
+
+.recomendacion-descripcion {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0 0 12px 0;
+}
+
+.recomendacion-ahorro {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(166, 255, 0, 0.1);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--green);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.ahorro-icono {
+  font-size: 16px;
+}
+
+.recomendacion-impacto {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+/* ========== CHATBOT ========== */
+.chatbot-card {
+  grid-column: 1 / -1;
+}
+
+.chatbot-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.chat-messages {
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Scrollbar personalizado */
+.chat-messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: var(--border-gray);
+  border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: var(--blue);
+  border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+  background: var(--green);
+}
+
+.chat-message {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  animation: messageSlideIn 0.3s ease;
+}
+
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-message.user {
+  flex-direction: row-reverse;
+}
+
+.message-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), var(--green));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.chat-message.user .message-avatar {
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+}
+
+.message-bubble {
+  max-width: 70%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--dark-card);
+  border: 1px solid var(--border-gray);
+}
+
+.chat-message.user .message-bubble {
+  background: rgba(0, 120, 255, 0.1);
+  border-color: rgba(0, 120, 255, 0.3);
+}
+
+.message-bubble p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+/* Typing Animation */
+.message-bubble.typing {
+  display: flex;
+  gap: 5px;
+  padding: 16px;
+}
+
+.message-bubble.typing span {
+  width: 8px;
+  height: 8px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: typing 1.4s infinite;
+}
+
+.message-bubble.typing span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.message-bubble.typing span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+  30% {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
+}
+
+/* Input Chat */
+.chat-input-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 12px 16px;
+  background: var(--dark-bg);
+  border: 1px solid var(--border-gray);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.chat-input:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(166, 255, 0, 0.1);
+}
+
+.chat-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.chat-send-btn {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--blue), var(--green));
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-send-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 120, 255, 0.4);
+}
+
+.chat-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Sugerencias Rápidas */
+.chat-suggestions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.suggestion-btn {
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-gray);
+  border-radius: 20px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.suggestion-btn:hover {
+  background: rgba(166, 255, 0, 0.1);
+  border-color: var(--green);
+  color: var(--green);
+}
+
+/* Estado Vacío */
+.ia-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  min-height: 200px;
+}
+
+.ia-empty-icon {
+  font-size: 48px;
+  margin-bottom: 15px;
+  opacity: 0.5;
+}
+
+.ia-empty p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin: 0;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1200px) {
+  .ia-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .recomendaciones-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .ia-container {
+    padding: 15px;
+  }
+
+  .ia-header h1 {
+    font-size: 24px;
+  }
+
+  .ia-header-icon {
+    font-size: 36px;
+  }
+
+  .ia-card {
+    padding: 20px;
+  }
+
+  .prediccion-valor {
+    font-size: 36px;
+  }
+
+  .predicciones-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .recomendaciones-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .message-bubble {
+    max-width: 85%;
+  }
+
+  .chat-suggestions {
+    flex-direction: column;
+  }
+
+  .suggestion-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .ia-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .prediccion-valor {
+    font-size: 32px;
+  }
+
+  .prediccion-unidad {
+    font-size: 20px;
+  }
+
+  .chat-messages {
+    max-height: 400px;
+  }
+}

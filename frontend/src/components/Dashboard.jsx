@@ -4,6 +4,9 @@ import logo from "../assets/powerflow-logo.png";
 import Dispositivos from "./Dispositivos";
 import Notificaciones from "./Notificaciones";
 import Consumo from "./Consumo";
+import Reportes from "./Reportes";
+import IA from "./IA";
+import Configuracion from "./Configuracion";
 
 export default function Dashboard({ onLogout }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -434,11 +437,26 @@ export default function Dashboard({ onLogout }) {
             <Consumo />
           )}
 
+          {activeSection === "Reportes" && (
+            <Reportes />
+          )}
+
+          {activeSection === "IA" && (
+            <IA />
+          )}
+
+          {activeSection === "Configuración" && (
+            <Configuracion />
+          )}
+
           {activeSection !== "Inicio" && 
            activeSection !== "Perfil" && 
            activeSection !== "Dispositivos" && 
            activeSection !== "Notificaciones" && 
-           activeSection !== "Consumo" && (
+           activeSection !== "Consumo" &&
+           activeSection !== "Reportes" &&
+           activeSection !== "IA" &&
+           activeSection !== "Configuración" && (
             <section className="cards-grid">
               <div className="card" style={{ gridColumn: "1 / -1", padding: "30px", textAlign: "center" }}>
                 <h2>{activeSection}</h2>
