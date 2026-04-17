@@ -43,7 +43,7 @@ export default function Dashboard({ onLogout }) {
         onLogout();
       }
     }
-  }, []);
+  }, [onLogout]);
 
   // Cargar notificaciones y filtrar las descartadas
   const cargarNotificaciones = async () => {

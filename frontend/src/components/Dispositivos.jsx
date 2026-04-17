@@ -37,6 +37,7 @@ export default function Dispositivos({ dispositivoIdParaEditar }) {
 
   useEffect(() => {
     cargarDispositivos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Efecto para abrir el modal cuando viene desde notificaciones

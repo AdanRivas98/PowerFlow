@@ -49,6 +49,7 @@ export default function Configuracion() {
 
   useEffect(() => {
     cargarDatosUsuario();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const cargarDatosUsuario = async () => {
@@ -256,6 +257,7 @@ export default function Configuracion() {
     if (meta_lps !== config.meta_mensual_lps) {
       setConfig(prev => ({ ...prev, meta_mensual_lps: parseFloat(meta_lps) }));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config.meta_mensual_kwh, config.tarifa_kwh]);
 
   

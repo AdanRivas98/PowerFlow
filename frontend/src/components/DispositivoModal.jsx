@@ -68,6 +68,7 @@ export default function DispositivoModal({
       // Resetear al mes actual
       setCurrentDate(new Date());
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingDevice, showModal]);
 
   // Cargar registros existentes del dispositivo
