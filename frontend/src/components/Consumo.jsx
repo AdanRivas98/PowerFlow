@@ -29,7 +29,7 @@ export default function Consumo() {
     cargarDatosConsumo();
   }, [periodo]);
 
-  // 📊 CARGAR DATOS REALES DEL BACKEND
+  // CARGAR DATOS DEL BACKEND
   const cargarDatosConsumo = async () => {
     setLoading(true);
     

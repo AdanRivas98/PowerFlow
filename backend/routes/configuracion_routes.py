@@ -12,9 +12,6 @@ from datetime import datetime
 
 configuracion_bp = Blueprint('configuracion', __name__)
 
-# Modelo para configuraciones (temporal - usar tabla si crece)
-# Por ahora guardamos como JSON en un campo de texto o archivo
-
 # ============================================
 # OBTENER CONFIGURACIÓN COMPLETA
 # ============================================
@@ -47,9 +44,6 @@ def obtener_configuracion(usuario_actual):
                 "tamano_texto": "medium"
             }
         }
-
-        # Aquí podrías cargar desde base de datos si tienes una tabla de configuración
-        # Por ahora retornamos valores por defecto
         
         return jsonify(config_default), 200
 

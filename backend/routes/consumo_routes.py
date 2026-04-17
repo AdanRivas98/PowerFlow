@@ -34,11 +34,9 @@ def obtener_resumen_consumo(usuario_actual):
             fecha_inicio = hoy
             fecha_fin = hoy
         elif periodo == 'semana':
-            # Última semana (7 días)
             fecha_inicio = hoy - timedelta(days=6)
             fecha_fin = hoy
         elif periodo == 'mes':
-            # Mes actual o mes especificado
             if mes_param and anio_param:
                 mes = mes_param
                 anio = anio_param

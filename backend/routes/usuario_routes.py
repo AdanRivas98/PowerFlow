@@ -8,7 +8,7 @@ import datetime
 
 usuario_bp = Blueprint('usuarios', __name__)
 
-# Clave secreta (para firmar el token)
+# Clave secreta
 SECRET_KEY = "powerflow_secret_key_2025"
 
 # Registrar nuevo usuario
@@ -99,7 +99,7 @@ def login_usuario():
     correo = data.get('correo')
     password = data.get('password')
 
-    # 🧩 Validar campos vacíos
+    # Validar campos vacíos
     if not correo:
         return jsonify({"error": "El campo 'correo' es obligatorio"}), 400
 

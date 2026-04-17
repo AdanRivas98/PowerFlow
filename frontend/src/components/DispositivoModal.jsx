@@ -92,7 +92,6 @@ export default function DispositivoModal({
         if (data.registros && data.registros.length > 0) {
           const fechas = data.registros.map(r => r.fecha);
           setSelectedDays(fechas);
-          // Usar las horas del primer registro como referencia
           if (data.registros[0].horas_uso) {
             setHorasUsoDia(data.registros[0].horas_uso);
           }
@@ -175,7 +174,7 @@ export default function DispositivoModal({
     const totalHoras = diasRegistrados * horasUsoDia;
     const potencia = parseFloat(formData.potencia_watts) || 0;
     const consumoKwh = (potencia * totalHoras) / 1000;
-    const costoEstimado = consumoKwh * 3.7; // Tarifa Honduras
+    const costoEstimado = consumoKwh * 3.7;
 
     return {
       diasRegistrados,

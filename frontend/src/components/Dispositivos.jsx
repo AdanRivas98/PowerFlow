@@ -76,7 +76,6 @@ export default function Dispositivos({ dispositivoIdParaEditar }) {
         
         if (Array.isArray(data)) {
           setDispositivos(data);
-          // Cargar registros mensuales para cada dispositivo
           await cargarRegistrosTodos(data);
         } else {
           setDispositivos([]);
@@ -238,9 +237,10 @@ export default function Dispositivos({ dispositivoIdParaEditar }) {
     return meses[new Date().getMonth()];
   };
 
+
+  /* Header */
   return (
     <div className="dispositivos-container">
-      {/* Header */}
       <div className="dispositivos-header">
         <div>
           <h1>💡 Mis Dispositivos</h1>

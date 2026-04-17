@@ -52,7 +52,7 @@ class Dispositivo(db.Model):
             "dias_registrados": len(registros),
             "total_horas": total_horas,
             "consumo_kwh": round(consumo_kwh, 2),
-            "costo_estimado": round(consumo_kwh * 3.7, 2)  # Tarifa Honduras
+            "costo_estimado": round(consumo_kwh * 3.7, 2)
         }
     
     def tiene_registro_hoy(self):

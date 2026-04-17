@@ -10,7 +10,7 @@ import json
 
 ia_bp = Blueprint('ia', __name__)
 
-# Clave API de Groq (mejor en variable de entorno)
+# Clave API de Groq
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 # Tarifa de energía en Honduras
@@ -88,7 +88,7 @@ def obtener_predicciones(usuario_actual):
         consumo_promedio_diario = consumo_total / num_dias
         
         # Predicción próxima semana (con ligera variación)
-        consumo_semana = consumo_promedio_diario * 7 * 1.05  # +5% buffer
+        consumo_semana = consumo_promedio_diario * 7 * 1.05 
         
         # Predicción próximo mes
         consumo_mes = consumo_promedio_diario * 30 * 1.05

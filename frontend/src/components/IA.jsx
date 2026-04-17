@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import "../styles/IA.css";
-
+ 
 export default function IA() {
   const [loading, setLoading] = useState(true);
   const [predicciones, setPredicciones] = useState(null);
@@ -11,24 +11,27 @@ export default function IA() {
   ]);
   const [inputMessage, setInputMessage] = useState("");
   const [sendingMessage, setSendingMessage] = useState(false);
-  const chatEndRef = useRef(null);
-
+  const chatContainerRef = useRef(null);
+ 
   const API_URL = "http://localhost:5000";
-
+ 
   useEffect(() => {
     cargarDatosIA();
   }, []);
-
+ 
   // Auto-scroll en el chat
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatContainerRef.current) {
+      const container = chatContainerRef.current;
+      container.scrollTop = container.scrollHeight;
+    }
   }, [chatMessages]);
-
+ 
   const cargarDatosIA = async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-
+ 
       // Cargar predicciones
       const predRes = await fetch(`${API_URL}/api/ia/predicciones`, {
         headers: { "Authorization": `Bearer ${token}` }
@@ -38,7 +41,7 @@ export default function IA() {
         const predData = await predRes.json();
         setPredicciones(predData);
       }
-
+ 
       // Cargar recomendaciones
       const recRes = await fetch(`${API_URL}/api/ia/recomendaciones`, {
         headers: { "Authorization": `Bearer ${token}` }
@@ -48,7 +51,7 @@ export default function IA() {
         const recData = await recRes.json();
         setRecomendaciones(recData.recomendaciones || []);
       }
-
+ 
       // Cargar patrones
       const patRes = await fetch(`${API_URL}/api/ia/patrones`, {
         headers: { "Authorization": `Bearer ${token}` }
@@ -58,24 +61,24 @@ export default function IA() {
         const patData = await patRes.json();
         setPatrones(patData);
       }
-
+ 
     } catch (error) {
       console.error("Error al cargar datos IA:", error);
     } finally {
       setLoading(false);
     }
   };
-
+ 
   const enviarMensajeChat = async () => {
     if (!inputMessage.trim() || sendingMessage) return;
-
+ 
     const userMessage = inputMessage.trim();
     setInputMessage("");
     
     // Agregar mensaje del usuario
     setChatMessages(prev => [...prev, { role: "user", content: userMessage }]);
     setSendingMessage(true);
-
+ 
     try {
       const token = localStorage.getItem("token");
       
@@ -87,7 +90,7 @@ export default function IA() {
         },
         body: JSON.stringify({ mensaje: userMessage })
       });
-
+ 
       if (response.ok) {
         const data = await response.json();
         setChatMessages(prev => [...prev, { 
@@ -110,14 +113,14 @@ export default function IA() {
       setSendingMessage(false);
     }
   };
-
+ 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       enviarMensajeChat();
     }
   };
-
+ 
   if (loading) {
     return (
       <div className="ia-loading">
@@ -126,7 +129,7 @@ export default function IA() {
       </div>
     );
   }
-
+ 
   return (
     <div className="ia-container">
       {/* Header */}
@@ -139,7 +142,81 @@ export default function IA() {
           </div>
         </div>
       </div>
-
+ 
+      {/* Chatbot Asistente - PRIMERO */}
+      <div className="ia-card chatbot-card">
+        <div className="ia-card-header">
+          <h2>💬 Asistente Inteligente</h2>
+          <span className="ia-badge">GPT-4</span>
+        </div>
+        
+        <div className="chatbot-content">
+          <div className="chat-messages" ref={chatContainerRef}>
+            {chatMessages.map((msg, index) => (
+              <div key={index} className={`chat-message ${msg.role}`}>
+                <div className="message-avatar">
+                  {msg.role === "assistant" ? "🤖" : "👤"}
+                </div>
+                <div className="message-bubble">
+                  <p>{msg.content}</p>
+                </div>
+              </div>
+            ))}
+            {sendingMessage && (
+              <div className="chat-message assistant">
+                <div className="message-avatar">🤖</div>
+                <div className="message-bubble typing">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <div className="chat-input-container">
+            <input
+              type="text"
+              className="chat-input"
+              placeholder="Pregunta sobre tu consumo energético..."
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyPress={handleKeyPress}
+              disabled={sendingMessage}
+            />
+            <button 
+              className="chat-send-btn"
+              onClick={enviarMensajeChat}
+              disabled={!inputMessage.trim() || sendingMessage}
+            >
+              <span>📤</span>
+            </button>
+          </div>
+ 
+          {/* Sugerencias Rápidas */}
+          <div className="chat-suggestions">
+            <button 
+              className="suggestion-btn"
+              onClick={() => setInputMessage("¿Cómo puedo reducir mi consumo?")}
+            >
+              ¿Cómo reducir consumo?
+            </button>
+            <button 
+              className="suggestion-btn"
+              onClick={() => setInputMessage("¿Cuál es mi dispositivo más costoso?")}
+            >
+              Dispositivo más costoso
+            </button>
+            <button 
+              className="suggestion-btn"
+              onClick={() => setInputMessage("Dame consejos de ahorro")}
+            >
+              Consejos de ahorro
+            </button>
+          </div>
+        </div>
+      </div>
+ 
       {/* Grid Principal - Predicciones y Patrones */}
       <div className="ia-main-grid">
         {/* Predicciones */}
@@ -171,7 +248,7 @@ export default function IA() {
                   <span>{predicciones.proxima_semana?.confianza || 0}% de confianza</span>
                 </div>
               </div>
-
+ 
               {/* Predicciones Adicionales */}
               <div className="predicciones-grid">
                 <div className="prediccion-item">
@@ -183,7 +260,7 @@ export default function IA() {
                     </span>
                   </div>
                 </div>
-
+ 
                 <div className="prediccion-item">
                   <div className="prediccion-icono">⚡</div>
                   <div className="prediccion-info">
@@ -193,7 +270,7 @@ export default function IA() {
                     </span>
                   </div>
                 </div>
-
+ 
                 <div className="prediccion-item">
                   <div className="prediccion-icono">💰</div>
                   <div className="prediccion-info">
@@ -204,7 +281,7 @@ export default function IA() {
                   </div>
                 </div>
               </div>
-
+ 
               {/* Tendencia */}
               {predicciones.tendencia && (
                 <div className={`tendencia-badge ${predicciones.tendencia.tipo}`}>
@@ -223,7 +300,7 @@ export default function IA() {
             </div>
           )}
         </div>
-
+ 
         {/* Análisis de Patrones */}
         <div className="ia-card patrones-card">
           <div className="ia-card-header">
@@ -246,7 +323,7 @@ export default function IA() {
                   </div>
                 </div>
               )}
-
+ 
               {/* Insights */}
               <div className="insights-lista">
                 <h3 className="insights-titulo">Insights Detectados</h3>
@@ -257,7 +334,7 @@ export default function IA() {
                   </div>
                 ))}
               </div>
-
+ 
               {/* Horarios de Mayor Consumo */}
               {patrones.horarios_pico && (
                 <div className="horarios-pico">
@@ -272,7 +349,7 @@ export default function IA() {
                   </div>
                 </div>
               )}
-
+ 
               {/* Dispositivos con Patrones Anómalos */}
               {patrones.anomalias && patrones.anomalias.length > 0 && (
                 <div className="anomalias-section">
@@ -294,7 +371,7 @@ export default function IA() {
           )}
         </div>
       </div>
-
+ 
       {/* Recomendaciones */}
       <div className="ia-card recomendaciones-card">
         <div className="ia-card-header">
@@ -337,81 +414,6 @@ export default function IA() {
             <p>¡Excelente! Estás optimizando muy bien tu consumo energético</p>
           </div>
         )}
-      </div>
-
-      {/* Chatbot Asistente */}
-      <div className="ia-card chatbot-card">
-        <div className="ia-card-header">
-          <h2>💬 Asistente Inteligente</h2>
-          <span className="ia-badge">GPT-4</span>
-        </div>
-        
-        <div className="chatbot-content">
-          <div className="chat-messages">
-            {chatMessages.map((msg, index) => (
-              <div key={index} className={`chat-message ${msg.role}`}>
-                <div className="message-avatar">
-                  {msg.role === "assistant" ? "🤖" : "👤"}
-                </div>
-                <div className="message-bubble">
-                  <p>{msg.content}</p>
-                </div>
-              </div>
-            ))}
-            {sendingMessage && (
-              <div className="chat-message assistant">
-                <div className="message-avatar">🤖</div>
-                <div className="message-bubble typing">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              </div>
-            )}
-            <div ref={chatEndRef} />
-          </div>
-          
-          <div className="chat-input-container">
-            <input
-              type="text"
-              className="chat-input"
-              placeholder="Pregunta sobre tu consumo energético..."
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              disabled={sendingMessage}
-            />
-            <button 
-              className="chat-send-btn"
-              onClick={enviarMensajeChat}
-              disabled={!inputMessage.trim() || sendingMessage}
-            >
-              <span>📤</span>
-            </button>
-          </div>
-
-          {/* Sugerencias Rápidas */}
-          <div className="chat-suggestions">
-            <button 
-              className="suggestion-btn"
-              onClick={() => setInputMessage("¿Cómo puedo reducir mi consumo?")}
-            >
-              ¿Cómo reducir consumo?
-            </button>
-            <button 
-              className="suggestion-btn"
-              onClick={() => setInputMessage("¿Cuál es mi dispositivo más costoso?")}
-            >
-              Dispositivo más costoso
-            </button>
-            <button 
-              className="suggestion-btn"
-              onClick={() => setInputMessage("Dame consejos de ahorro")}
-            >
-              Consejos de ahorro
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

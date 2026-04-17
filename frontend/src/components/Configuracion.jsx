@@ -260,43 +260,6 @@ export default function Configuracion() {
 
   
 
-  // PERFIL - Eliminar cuenta
-  const handleEliminarCuenta = async () => {
-    const confirmacion = window.prompt(
-      'Esta acción es IRREVERSIBLE. Todos tus datos serán eliminados permanentemente.\n\n' +
-      'Escribe "ELIMINAR MI CUENTA" para confirmar:'
-    );
-
-    if (confirmacion !== "ELIMINAR MI CUENTA") {
-      return;
-    }
-
-    try {
-      setSaving(true);
-      const token = localStorage.getItem("token");
-
-      const response = await fetch(`${API_URL}/api/usuarios/eliminar`, {
-        method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
-      });
-
-      if (response.ok) {
-        localStorage.clear();
-        window.location.href = "/";
-      } else {
-        mostrarMensaje("Error al eliminar cuenta", "error");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      mostrarMensaje("Error de conexión", "error");
-    } finally {
-      setSaving(false);
-    }
-  };
-
   const menuItems = [
     { id: "perfil", icon: "👤", label: "Perfil" },
     { id: "energetica", icon: "⚡", label: "Energética" },
@@ -449,20 +412,6 @@ export default function Configuracion() {
                 </button>
               </div>
 
-              {/* Zona de peligro */}
-              <div className="config-card danger-zone">
-                <h3 className="card-title">🚨 Zona de Peligro</h3>
-                <p className="danger-text">
-                  Una vez elimines tu cuenta, no hay vuelta atrás. Por favor, ten certeza.
-                </p>
-                <button 
-                  className="btn-danger"
-                  onClick={handleEliminarCuenta}
-                  disabled={saving}
-                >
-                  Eliminar mi cuenta
-                </button>
-              </div>
             </div>
           )}
 
@@ -484,30 +433,6 @@ export default function Configuracion() {
                     onChange={(e) => setConfig({ ...config, tarifa_kwh: parseFloat(e.target.value) || 0 })}
                   />
                   <small className="form-help">Tarifa promedio en Honduras: L 3.70/kWh</small>
-                </div>
-
-                <div className="form-group">
-                  <label>Proveedor de energía</label>
-                  <select
-                    value={config.proveedor}
-                    onChange={(e) => setConfig({ ...config, proveedor: e.target.value })}
-                  >
-                    <option value="ENEE">ENEE</option>
-                    <option value="Privado">Privado</option>
-                    <option value="Otro">Otro</option>
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label>Día de corte del mes</label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="31"
-                    value={config.dia_corte}
-                    onChange={(e) => setConfig({ ...config, dia_corte: parseInt(e.target.value) || 1 })}
-                  />
-                  <small className="form-help">Día en que llega tu factura</small>
                 </div>
               </div>
 
@@ -611,7 +536,7 @@ export default function Configuracion() {
 
               <div className="config-card">
                 <p className="copyright">
-                  © 2024 PowerFlow. Todos los derechos reservados.
+                  © 2025 PowerFlow. Todos los derechos reservados.
                 </p>
               </div>
             </div>

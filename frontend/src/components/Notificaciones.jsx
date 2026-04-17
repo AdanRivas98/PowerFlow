@@ -16,7 +16,7 @@ export default function Notificaciones({ onNavigateToDevice, onNotificacionDesca
     cargarNotificaciones();
   }, []);
 
-  // ✅ CORREGIDO: Cargar notificaciones y filtrar las descartadas
+  // Cargar notificaciones y filtrar las descartadas
   const cargarNotificaciones = async () => {
     try {
       setLoading(true);
@@ -34,7 +34,7 @@ export default function Notificaciones({ onNavigateToDevice, onNotificacionDesca
         console.log("📋 Notificaciones del backend:", data);
         
         if (data.dispositivos && Array.isArray(data.dispositivos)) {
-          // ✅ FIX BUG 2: Obtener dispositivos descartados de sessionStorage
+          // Obtener dispositivos descartados de sessionStorage
           const descartadosStr = sessionStorage.getItem("notificaciones_descartadas");
           const descartados = descartadosStr ? JSON.parse(descartadosStr) : [];
           
@@ -125,7 +125,7 @@ export default function Notificaciones({ onNavigateToDevice, onNotificacionDesca
     }
   };
 
-  // ✅ CORREGIDO BUG 2: Guardar dispositivos descartados en sessionStorage
+  // Guardar dispositivos descartados en sessionStorage
   const marcarComoNoUsado = (notificacion) => {
     console.log(`🗑️ Descartando notificación del dispositivo ID: ${notificacion.id}`);
     
@@ -158,7 +158,7 @@ export default function Notificaciones({ onNavigateToDevice, onNotificacionDesca
     console.log(`✓ Notificación descartada. Quedan ${notificacionesActualizadas.length}`);
   };
 
-  // ✅ CORREGIDO BUG 3: Marcar todas como leídas ahora las descarta todas
+  // Marcar todas como leídas ahora las descarta todas
   const marcarTodasLeidas = () => {
     console.log("🗑️ Descartando TODAS las notificaciones");
     

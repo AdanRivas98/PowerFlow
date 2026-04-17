@@ -7,8 +7,8 @@ import os
 
 dispositivo_bp = Blueprint('dispositivos', __name__)
 
-# Clave API de Groq (mejor en variable de entorno)
-GROQ_API_KEY = os.getenv('GROQ_API_KEY', 'tu_clave_aqui')  # Cambiar por tu clave real
+# Clave API de Groq
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 
 # Base de datos estática de dispositivos comunes (fallback)
 DISPOSITIVOS_COMUNES = {
@@ -60,7 +60,6 @@ DISPOSITIVOS_COMUNES = {
 
 
 def buscar_en_db_estatica(nombre):
-    """Busca en la base de datos estática"""
     nombre_lower = nombre.lower()
     
     # Buscar coincidencia exacta o parcial

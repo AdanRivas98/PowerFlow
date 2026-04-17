@@ -41,7 +41,7 @@ def obtener_registros(usuario_actual, dispositivo_id):
     
     if dispositivo.potencia_watts:
         consumo_kwh = (dispositivo.potencia_watts * total_horas) / 1000
-        costo_estimado = consumo_kwh * 3.7  # Tarifa Honduras
+        costo_estimado = consumo_kwh * 3.7 
     
     return jsonify({
         "dispositivo_id": dispositivo_id,
