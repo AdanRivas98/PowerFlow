@@ -274,10 +274,6 @@ export default function Dashboard({ onLogout }) {
         </nav>
 
         <div className="sidebar-footer">
-          <button className="nav-item" onClick={() => handleNavClick("Perfil")}>
-            <span className="nav-icon">👤</span>
-            <span className="nav-text">Perfil</span>
-          </button>
           <button className="nav-item" onClick={handleLogout} style={{ color: "#ff4444" }}>
             <span className="nav-icon">🚪</span>
             <span className="nav-text">Cerrar Sesión</span>
@@ -395,28 +391,6 @@ export default function Dashboard({ onLogout }) {
                     El consumo para la próxima semana se estima en{" "}
                     <strong>270 kWh</strong>.
                   </p>
-                </div>
-              </div>
-            </section>
-          )}
-
-          {activeSection === "Perfil" && (
-            <section className="cards-grid">
-              <div className="card" style={{ gridColumn: "1 / -1", padding: "30px" }}>
-                <h2 style={{ marginBottom: "20px" }}>Mi Perfil</h2>
-                <div style={{ display: "grid", gap: "15px" }}>
-                  <div>
-                    <strong>Nombre:</strong> {usuario.nombre}
-                  </div>
-                  <div>
-                    <strong>Correo:</strong> {usuario.correo}
-                  </div>
-                  <div>
-                    <strong>ID de Usuario:</strong> {usuario.id}
-                  </div>
-                  <div>
-                    <strong>Dispositivos registrados:</strong> {Array.isArray(dispositivos) ? dispositivos.length : 0}
-                  </div>
                 </div>
               </div>
             </section>
