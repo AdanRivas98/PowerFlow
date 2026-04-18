@@ -2,9 +2,11 @@ from functools import wraps
 from flask import request, jsonify
 import jwt
 from models.usuario import Usuario
+import os
+
 
 # Usa la misma clave que en usuario_routes.py
-SECRET_KEY = "powerflow_secret_key_2025"
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 def token_required(f):
     @wraps(f)

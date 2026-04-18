@@ -5,11 +5,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import re
 import jwt
 import datetime
+import os
 
 usuario_bp = Blueprint('usuarios', __name__)
 
 # Clave secreta
-SECRET_KEY = "powerflow_secret_key_2025"
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # Registrar nuevo usuario
 @usuario_bp.route('/api/usuarios', methods=['POST'])
