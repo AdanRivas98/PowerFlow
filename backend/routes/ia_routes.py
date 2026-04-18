@@ -13,7 +13,7 @@ ia_bp = Blueprint('ia', __name__)
 # Clave API de Groq
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
-# Tarifa de energía en Honduras
+# Tarifa de energía
 TARIFA_KWH = 3.7
 
 
