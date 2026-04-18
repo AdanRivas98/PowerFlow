@@ -21,14 +21,14 @@ def create_app():
     # Configuración básica de Flask + SQLAlchemy
     app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY'] = 'clave-super-secreta-powerflow'  # luego la pasamos a .env
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
     # Inicializamos extensiones
     db.init_app(app)
     CORS(app)
     migrate=Migrate(app, db)
 
-    # Registrar Blueprints
+    # Blueprints
     app.register_blueprint(usuario_bp)
     app.register_blueprint(dispositivo_bp)
     app.register_blueprint(registro_uso_bp)
@@ -36,7 +36,7 @@ def create_app():
     app.register_blueprint(ia_bp)
     app.register_blueprint(configuracion_bp)
 
-    # Registramos modelos y creamos tablas
+    # modelos y creamos tablas
     with app.app_context():
         from models import Usuario, Dispositivo, Consumo, SugerencIA, RegistroUso
         db.create_all()
